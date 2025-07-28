@@ -1,10 +1,13 @@
 import 'package:beans_alert/src/bloc/LoginBloc.dart';
+import 'package:beans_alert/src/services/FirebaseService.dart';
 import 'package:beans_alert/src/view/SplashView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
+
+  await FirebaseServices.run();
 }
 
 class MyApp extends StatelessWidget {
