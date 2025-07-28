@@ -30,3 +30,8 @@ assets:
     - assets/icons/
     - assets/fonts/
 
+fonts:
+  - family: Anton
+    fonts:
+      - asset: assets/fonts/Anton-Regular.ttf
+        weight: 400

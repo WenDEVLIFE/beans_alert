@@ -14,6 +14,22 @@ class SplashView extends StatefulWidget {
 
 class _SplashViewState extends State<SplashView> {
 
+  bool isLoading = true;
+
+  void initState() {
+    super.initState();
+    // Simulate a delay for loading
+    Future.delayed(Duration(seconds: 3), () {
+      setState(() {
+        isLoading = false;
+      });
+      // Navigate to the next screen or perform any action after loading
+      Navigator.pushReplacement(context,  MaterialPageRoute(builder: (context) {
+        return SplashView();
+      }));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -38,7 +54,7 @@ class _SplashViewState extends State<SplashView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CustomText(text: 'BEANS',
-                fontFamily: 'PlayfairDisplay',
+                fontFamily: 'Anton',
                 fontSize: 30.0,
                 color: Colors.black,
                 fontWeight: FontWeight.w700,
@@ -46,7 +62,7 @@ class _SplashViewState extends State<SplashView> {
             ),
             SizedBox(width: screenWidth * 0.02),
             CustomText(text: 'ALERT',
-                fontFamily: 'PlayfairDisplay',
+                fontFamily: 'Anton',
                 fontSize: 30.0,
                 color: ColorHelpers.accentColor,
                 fontWeight: FontWeight.w700,
@@ -55,10 +71,11 @@ class _SplashViewState extends State<SplashView> {
           ],
         ),
         SizedBox(height: screenHeight * 0.02),
-        CircularProgressIndicator(
-          color: ColorHelpers.accentColor,
-          strokeWidth: 5.0,
-        ),
+        isLoading
+            ? CircularProgressIndicator(
+                color: ColorHelpers.accentColor,
+              )
+            : SizedBox(),
       ],
     ),
     ),
