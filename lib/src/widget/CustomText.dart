@@ -26,7 +26,7 @@ class CustomText extends StatelessWidget {
       style: TextStyle(
         fontFamily: fontFamily,
         fontSize: fontSize,
-        color:  text == 'Sign In' ? color : text == 'Sign Up' ? color : text == 'What are you feeling right now?' ? color : text == 'Your Feelings are welcome, whenever you like to share' ? color : Theme.of(context).textTheme.bodyLarge?.color,
+        color:  color,
         fontWeight: fontWeight,
       ),
       textAlign: textAlign,
