@@ -1,0 +1,29 @@
+ {
+  "project_info": {
+    "project_number": "671405515090",
+    "project_id": "beans-alert-database",
+    "storage_bucket": "beans-alert-database.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:671405515090:android:08cd2a72403132074c5a8b",
+        "android_client_info": {
+          "package_name": "com.beans.alert.beans_alert"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGdshUog0aSImICPDs1epYFuaJbTqCAHU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,3 +1,4 @@
+import 'package:beans_alert/src/helpers/ImageHelper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -44,7 +45,7 @@ class _SplashViewState extends State<SplashView> {
           height: screenHeight * 0.3,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage("assets/images/splash_image.png"),
+              image: AssetImage(ImageHelper.logoPath),
               fit: BoxFit.cover,
             ),
           ),
@@ -65,7 +66,7 @@ class _SplashViewState extends State<SplashView> {
                 fontFamily: 'Anton',
                 fontSize: 30.0,
                 color: ColorHelpers.accentColor,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w400,
                 textAlign:  TextAlign.center
             ),
           ],
