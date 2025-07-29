@@ -36,7 +36,7 @@ class CustomPasswordField extends StatelessWidget {
             offset: Offset(2, 2), // Offset in x and y direction
           ),
         ],
-        borderRadius: BorderRadius.circular(8.0), // Match the border radius
+        borderRadius: BorderRadius.circular(30.0), // Match the border radius
       ),
       child: TextField(
         controller: controller,
@@ -70,14 +70,14 @@ class CustomPasswordField extends StatelessWidget {
           filled: true,
           fillColor: fillColor,
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(30.0),
             borderSide: BorderSide(
               color: borderColor,
               width: 3.0,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(30.0),
             borderSide: BorderSide(
               color: borderColor,
               width: 2.0,

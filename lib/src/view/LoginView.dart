@@ -1,4 +1,5 @@
 import 'package:beans_alert/src/helpers/ColorHelpers.dart';
+import 'package:beans_alert/src/widget/CustomButton.dart';
 import 'package:beans_alert/src/widget/CustomPasswordField.dart';
 import 'package:beans_alert/src/widget/CustomTextField.dart';
 import 'package:flutter/cupertino.dart';
@@ -86,6 +87,12 @@ class _LoginViewState extends State<LoginView> {
                     });
                   },
                 ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: CustomButton(hintText: 'LOGIN', fontFamily: 'Anton', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
+
+                }, width: screenWidth * 0.50, height: screenHeight * 0.06,),
               ),
             ],
           ),
