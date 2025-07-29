@@ -1,4 +1,5 @@
 import 'package:beans_alert/src/helpers/ImageHelper.dart';
+import 'package:beans_alert/src/view/LoginView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +27,7 @@ class _SplashViewState extends State<SplashView> {
       });
       // Navigate to the next screen or perform any action after loading
       Navigator.pushReplacement(context,  MaterialPageRoute(builder: (context) {
-        return SplashView();
+        return LoginView();
       }));
     });
   }

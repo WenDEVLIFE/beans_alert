@@ -1,0 +1,66 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+class CustomTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hintText;
+  final Color borderColor;
+  final Color fillColor;
+
+  const CustomTextField({
+    Key? key,
+    required this.controller,
+    required this.hintText,
+    required this.borderColor,
+    required this.fillColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5), // Shadow color
+            spreadRadius: 2, // Spread radius
+            blurRadius: 4, // Blur radius
+            offset: Offset(2, 2), // Offset in x and y direction
+          ),
+        ],
+        borderRadius: BorderRadius.circular(8.0), // Match the border radius
+      ),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: hintText,
+          filled: true,
+          hintStyle: TextStyle(
+            fontFamily: 'Anton',
+            color: Colors.black, // Hint text color
+            fontSize: 16.0, // Hint text size
+            fontWeight: FontWeight.w400,
+          ),
+          fillColor: fillColor,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(
+              color: Colors.transparent, // Custom border color for the enabled state
+              width: 1.0,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(
+              color: borderColor.withOpacity(0.8), // Custom border color for the focused state
+              width: 2.0,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
