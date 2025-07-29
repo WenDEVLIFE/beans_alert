@@ -2,18 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomPasswordField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final Color borderColor;
   final Color fillColor;
+  final bool obscureText;
+  final VoidCallback ? onIconPressed;
 
-  const CustomTextField({
+
+  const CustomPasswordField({
     Key? key,
     required this.controller,
     required this.hintText,
     required this.borderColor,
     required this.fillColor,
+    required this.obscureText,
+    this.onIconPressed,
   }) : super(key: key);
 
   @override
@@ -35,6 +40,7 @@ class CustomTextField extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
+        obscureText: obscureText,
         style: TextStyle(
           fontFamily: 'Anton',
           color: Colors.black, // Text color
@@ -43,13 +49,25 @@ class CustomTextField extends StatelessWidget {
         ),
         decoration: InputDecoration(
           hintText: hintText,
-          filled: true,
           hintStyle: TextStyle(
             fontFamily: 'Anton',
             color: Colors.black, // Hint text color
             fontSize: 16.0, // Hint text size
             fontWeight: FontWeight.w400,
           ),
+          suffixIcon: IconButton(
+            icon: Icon(
+              obscureText ? Icons.visibility_off : Icons.visibility,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              if (onIconPressed != null) {
+                onIconPressed!();
+              }
+
+            },
+          ),
+          filled: true,
           fillColor: fillColor,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
