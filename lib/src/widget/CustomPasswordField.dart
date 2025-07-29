@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CustomPasswordField extends StatelessWidget {
   final TextEditingController controller;
@@ -8,8 +7,7 @@ class CustomPasswordField extends StatelessWidget {
   final Color borderColor;
   final Color fillColor;
   final bool obscureText;
-  final VoidCallback ? onIconPressed;
-
+  final VoidCallback? onIconPressed;
 
   const CustomPasswordField({
     Key? key,
@@ -18,54 +16,50 @@ class CustomPasswordField extends StatelessWidget {
     required this.borderColor,
     required this.fillColor,
     required this.obscureText,
-    this.onIconPressed,
+    required this.onIconPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5), // Shadow color
-            spreadRadius: 2, // Spread radius
-            blurRadius: 4, // Blur radius
-            offset: Offset(2, 2), // Offset in x and y direction
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(2, 2),
           ),
         ],
-        borderRadius: BorderRadius.circular(30.0), // Match the border radius
+        borderRadius: BorderRadius.circular(30.0),
       ),
       child: TextField(
         controller: controller,
         obscureText: obscureText,
+        keyboardType: TextInputType.visiblePassword,
+        autocorrect: false,
+        enableSuggestions: false,
         style: TextStyle(
           fontFamily: 'Anton',
-          color: Colors.black, // Text color
-          fontSize: 16.0, // Text size
+          color: Colors.black,
+          fontSize: 16.0,
           fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
             fontFamily: 'Anton',
-            color: Colors.black, // Hint text color
-            fontSize: 16.0, // Hint text size
+            color: Colors.black,
+            fontSize: 16.0,
             fontWeight: FontWeight.w400,
           ),
           suffixIcon: IconButton(
-            icon: Icon(
-              obscureText ? Icons.visibility_off : Icons.visibility,
+            icon: FaIcon(
+              obscureText ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
               color: Colors.black,
+              size: 24.0,
             ),
-            onPressed: () {
-              if (onIconPressed != null) {
-                onIconPressed!();
-              }
-
-            },
+            onPressed: onIconPressed,
           ),
           filled: true,
           fillColor: fillColor,

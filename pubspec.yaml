@@ -20,7 +20,7 @@ dependencies:
   firebase_auth: ^5.7.0
   firebase_storage: ^12.4.10
   fluttertoast:  ^8.0.9
-
+  font_awesome_flutter : ^10.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
