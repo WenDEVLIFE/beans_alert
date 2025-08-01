@@ -1,5 +1,6 @@
 import 'package:beans_alert/src/helpers/ImageHelper.dart';
 import 'package:beans_alert/src/view/LoginView.dart';
+import 'package:beans_alert/src/widget/CustomLoadingBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -74,9 +75,7 @@ class _SplashViewState extends State<SplashView> {
         ),
         SizedBox(height: screenHeight * 0.02),
         isLoading
-            ? CircularProgressIndicator(
-                color: ColorHelpers.accentColor,
-              )
+            ? CustomLoadingBar(progress: 0.7, label: 'Loading...')
             : SizedBox(),
       ],
     ),
