@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:beans_alert/src/helpers/ImageHelper.dart';
 import 'package:beans_alert/src/view/LoginView.dart';
 import 'package:beans_alert/src/widget/CustomLoadingBar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../helpers/ColorHelpers.dart';

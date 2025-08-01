@@ -4,7 +4,6 @@ import 'package:beans_alert/src/widget/CustomButton.dart';
 import 'package:beans_alert/src/widget/CustomPasswordField.dart';
 import 'package:beans_alert/src/widget/CustomTextButton.dart';
 import 'package:beans_alert/src/widget/CustomTextField.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
