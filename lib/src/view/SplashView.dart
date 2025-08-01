@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:beans_alert/src/helpers/ImageHelper.dart';
 import 'package:beans_alert/src/view/LoginView.dart';
 import 'package:beans_alert/src/widget/CustomLoadingBar.dart';
@@ -18,19 +20,30 @@ class SplashView extends StatefulWidget {
 class _SplashViewState extends State<SplashView> {
 
   bool isLoading = true;
+  double progress = 0.0;
+  Timer? _timer;
+
 
   void initState() {
     super.initState();
     // Simulate a delay for loading
-    Future.delayed(Duration(seconds: 3), () {
+    _timer = Timer.periodic(Duration(milliseconds: 50), (timer) {
       setState(() {
-        isLoading = false;
+        progress += 0.02;
+        if (progress >= 1.0) {
+          progress = 1.0;
+          isLoading = false;
+          _timer?.cancel();
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginView()));
+        }
       });
-      // Navigate to the next screen or perform any action after loading
-      Navigator.pushReplacement(context,  MaterialPageRoute(builder: (context) {
-        return LoginView();
-      }));
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -75,7 +88,9 @@ class _SplashViewState extends State<SplashView> {
         ),
         SizedBox(height: screenHeight * 0.02),
         isLoading
-            ? CustomLoadingBar(progress: 0.7, label: 'Loading...')
+            ? Padding(padding:  EdgeInsets.all(16.0),
+          child: CustomLoadingBar(progress: progress, label: 'Loading...'),
+        )
             : SizedBox(),
       ],
     ),
