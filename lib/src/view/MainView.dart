@@ -1,3 +1,4 @@
+import 'package:beans_alert/src/widget/CustomNavigationSideBar.dart';
 import 'package:flutter/material.dart';
 
 class MainView extends StatelessWidget {
@@ -9,6 +10,7 @@ class MainView extends StatelessWidget {
       appBar: AppBar(
         title: Text('Main View'),
       ),
+      drawer: CustomNavigationSideBar(),
       body: Center(
         child: Text(
           'Welcome to the Main View!',

@@ -1,5 +1,6 @@
 import 'package:beans_alert/src/bloc/LoginBloc.dart';
 import 'package:beans_alert/src/helpers/ColorHelpers.dart';
+import 'package:beans_alert/src/view/MainView.dart';
 import 'package:beans_alert/src/widget/CustomButton.dart';
 import 'package:beans_alert/src/widget/CustomPasswordField.dart';
 import 'package:beans_alert/src/widget/CustomTextButton.dart';
@@ -107,6 +108,7 @@ class _LoginViewState extends State<LoginView> {
                   padding: EdgeInsets.all(20.0),
                   child: CustomButton(hintText: 'Login', fontFamily: 'Anton', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
 
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainView()));
                   }, width: screenWidth * 0.60, height: screenHeight * 0.06,),
                 ),
               ],
