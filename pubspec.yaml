@@ -28,7 +28,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/
-    - assets/icons/
+    - assets/ico/
     - assets/fonts/
 
   fonts:
