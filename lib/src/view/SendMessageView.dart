@@ -6,8 +6,8 @@ import 'package:flutter_svg/svg.dart';
 import '../helpers/ColorHelpers.dart';
 import '../widget/CustomText.dart';
 
-class MainView extends StatelessWidget {
-  const MainView({Key? key}) : super(key: key);
+class SendMessageView extends StatelessWidget {
+  const SendMessageView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,30 +30,30 @@ class MainView extends StatelessWidget {
           ),
         ),
         title: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CustomText(text: 'BEANS',
-              fontFamily: 'Anton',
-              fontSize: 30.0,
-              color: Colors.black,
-              fontWeight: FontWeight.w700,
-              textAlign:  TextAlign.center
-          ),
-          SizedBox(width: screenWidth * 0.02),
-          CustomText(text: 'ALERT',
-              fontFamily: 'Anton',
-              fontSize: 30.0,
-              color: ColorHelpers.accentColor,
-              fontWeight: FontWeight.w400,
-              textAlign:  TextAlign.center
-          ),
-        ],
-      ),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomText(text: 'BEANS',
+                fontFamily: 'Anton',
+                fontSize: 30.0,
+                color: Colors.black,
+                fontWeight: FontWeight.w700,
+                textAlign:  TextAlign.center
+            ),
+            SizedBox(width: screenWidth * 0.02),
+            CustomText(text: 'ALERT',
+                fontFamily: 'Anton',
+                fontSize: 30.0,
+                color: ColorHelpers.accentColor,
+                fontWeight: FontWeight.w400,
+                textAlign:  TextAlign.center
+            ),
+          ],
+        ),
       ),
       drawer: CustomNavigationSideBar(),
       body: Center(
         child: Text(
-          'User Management View',
+          'Send Message View',
           style: TextStyle(fontSize: 24),
         ),
       ),
