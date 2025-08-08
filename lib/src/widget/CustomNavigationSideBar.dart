@@ -4,6 +4,7 @@ import 'package:beans_alert/src/widget/CustomText.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../helpers/ImageHelper.dart';
+import '../model/DrawerItem.dart';
 
 class CustomNavigationSideBar extends StatefulWidget {
   @override
@@ -13,12 +14,12 @@ class CustomNavigationSideBar extends StatefulWidget {
 class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
   int selectedIndex = -1;
 
-  final List<_DrawerItem> items = [
-    _DrawerItem(SvgHelpers.userSettings, 'User Management'),
-    _DrawerItem(SvgHelpers.addEmail, 'Send Message'),
-    _DrawerItem(SvgHelpers.email, 'Message History'),
-    _DrawerItem(SvgHelpers.phonebook, 'Contacts'),
-    _DrawerItem(SvgHelpers.calendar, 'Calendar'),
+  final List<DrawerItem> items = [
+    DrawerItem(SvgHelpers.userSettings, 'User Management'),
+    DrawerItem(SvgHelpers.addEmail, 'Send Message'),
+    DrawerItem(SvgHelpers.email, 'Message History'),
+    DrawerItem(SvgHelpers.phonebook, 'Contacts'),
+    DrawerItem(SvgHelpers.calendar, 'Calendar'),
   ];
 
   @override
@@ -86,8 +87,3 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
   }
 }
 
-class _DrawerItem {
-  final String iconPath;
-  final String title;
-  _DrawerItem(this.iconPath, this.title);
-}
