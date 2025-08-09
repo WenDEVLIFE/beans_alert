@@ -6,6 +6,7 @@ import 'package:beans_alert/src/view/MainView.dart';
 import 'package:beans_alert/src/view/MessageHistory.dart';
 import 'package:beans_alert/src/view/SendMessageView.dart';
 import 'package:beans_alert/src/widget/CustomText.dart';
+import 'package:beans_alert/src/widget/MenuDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../helpers/ImageHelper.dart';
@@ -19,6 +20,7 @@ class CustomNavigationSideBar extends StatefulWidget {
 
 class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
   int selectedIndex = -1;
+  late BuildContext contextData;
 
   final List<DrawerItem> items = [
     DrawerItem(SvgHelpers.userSettings, 'User Management'),
@@ -108,10 +110,60 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
                   }
 
                   else if (index == 5) {
-                    // Handle Logout
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => LoginView()));
+                    final mainContext = context; // Save the main screen context
+
+                    // Show the confirmation dialog
+                    showDialog(
+                      context: mainContext,
+                      builder: (dialogContext) => AlertDialog(
+                        backgroundColor: ColorHelpers.primaryColor,
+                        title: CustomText(
+                          text: 'Logout',
+                          fontFamily: 'Anton',
+                          fontSize: 30,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          textAlign: TextAlign.left,
+                        ),
+                        content: CustomText(
+                          text: 'Are you sure you want to logout?',
+                          fontFamily: 'Anton',
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          textAlign: TextAlign.left,
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(dialogContext);
+                              Navigator.pushReplacement(dialogContext, MaterialPageRoute(builder: (context) => LoginView()));
+                            },
+                            child: CustomText(
+                              text: 'Yes',
+                              fontFamily: 'Anton',
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(dialogContext),
+                            child: CustomText(
+                              text: 'No',
+                              fontFamily: 'Anton',
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   }
+
                 },
               ),
             );
