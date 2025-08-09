@@ -115,51 +115,17 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
                     // Show the confirmation dialog
                     showDialog(
                       context: mainContext,
-                      builder: (dialogContext) => AlertDialog(
-                        backgroundColor: ColorHelpers.primaryColor,
-                        title: CustomText(
-                          text: 'Logout',
-                          fontFamily: 'Anton',
-                          fontSize: 30,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          textAlign: TextAlign.left,
-                        ),
-                        content: CustomText(
-                          text: 'Are you sure you want to logout?',
-                          fontFamily: 'Anton',
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          textAlign: TextAlign.left,
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(dialogContext);
-                              Navigator.pushReplacement(dialogContext, MaterialPageRoute(builder: (context) => LoginView()));
-                            },
-                            child: CustomText(
-                              text: 'Yes',
-                              fontFamily: 'Anton',
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(dialogContext),
-                            child: CustomText(
-                              text: 'No',
-                              fontFamily: 'Anton',
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                        ],
+                      builder: (dialogContext) => MenuDialog(
+                        title: 'Logout',
+                        content: 'Are you sure you want to logout?',
+                        onConfirm: () {
+                          Navigator.pop(dialogContext);
+                          Navigator.pushReplacement(dialogContext, MaterialPageRoute(builder: (context) => LoginView()));
+
+                        },
+                        onCancel: () {
+                          Navigator.pop(dialogContext);
+                        },
                       ),
                     );
                   }
