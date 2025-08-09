@@ -1,10 +1,15 @@
 import 'package:beans_alert/src/helpers/ColorHelpers.dart';
 import 'package:beans_alert/src/helpers/SvgHelpers.dart';
+import 'package:beans_alert/src/view/CalendarView.dart';
+import 'package:beans_alert/src/view/MainView.dart';
+import 'package:beans_alert/src/view/MessageHistory.dart';
+import 'package:beans_alert/src/view/SendMessageView.dart';
 import 'package:beans_alert/src/widget/CustomText.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../helpers/ImageHelper.dart';
 import '../model/DrawerItem.dart';
+import '../view/ContactView.dart';
 
 class CustomNavigationSideBar extends StatefulWidget {
   @override
@@ -77,6 +82,28 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
                   setState(() => selectedIndex = index);
                   Navigator.pop(context);
                   // Add navigation logic here
+
+                  if (index == 0) {
+                    // Navigate to User Management
+                    Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => MainView()));
+                  } else if (index == 1) {
+                    // Navigate to Send Message
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => SendMessageView()));
+                  } else if (index == 2) {
+                    // Navigate to Message History
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => MessageHistory()));
+                  } else if (index == 3) {
+                    // Navigate to Contacts
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => ContactView()));
+                  } else if (index == 4) {
+                    // Navigate to Calendar
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => CalendarView()));
+                  }
                 },
               ),
             );
