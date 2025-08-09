@@ -5,4 +5,5 @@ class SvgHelpers {
   static const String addEmail = 'assets/ico/mail_plus.svg';
   static const String userSettings = 'assets/ico/user_settings.svg';
   static const String menulist = 'assets/ico/align_left.svg';
+  static const String logout = 'assets/ico/log.svg';
 }

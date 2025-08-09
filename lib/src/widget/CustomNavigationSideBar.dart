@@ -1,6 +1,7 @@
 import 'package:beans_alert/src/helpers/ColorHelpers.dart';
 import 'package:beans_alert/src/helpers/SvgHelpers.dart';
 import 'package:beans_alert/src/view/CalendarView.dart';
+import 'package:beans_alert/src/view/LoginView.dart';
 import 'package:beans_alert/src/view/MainView.dart';
 import 'package:beans_alert/src/view/MessageHistory.dart';
 import 'package:beans_alert/src/view/SendMessageView.dart';
@@ -25,6 +26,7 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
     DrawerItem(SvgHelpers.email, 'Message History'),
     DrawerItem(SvgHelpers.phonebook, 'Contacts'),
     DrawerItem(SvgHelpers.calendar, 'Calendar'),
+    DrawerItem(SvgHelpers.logout, 'Logout'),
   ];
 
   @override
@@ -103,6 +105,12 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
                     // Navigate to Calendar
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => CalendarView()));
+                  }
+
+                  else if (index == 5) {
+                    // Handle Logout
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => LoginView()));
                   }
                 },
               ),
