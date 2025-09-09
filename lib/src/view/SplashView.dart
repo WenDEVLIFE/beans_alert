@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:beans_alert/src/helpers/ImageHelper.dart';
+import 'package:beans_alert/src/helpers/SessionHelpers.dart';
 import 'package:beans_alert/src/view/LoginView.dart';
+import 'package:beans_alert/src/view/MainView.dart';
 import 'package:beans_alert/src/widget/CustomLoadingBar.dart';
 import 'package:flutter/material.dart';
 
@@ -13,19 +15,21 @@ class SplashView extends StatefulWidget {
 
   @override
   _SplashViewState createState() => _SplashViewState();
-
 }
 
 class _SplashViewState extends State<SplashView> {
-
   bool isLoading = true;
   double progress = 0.0;
   Timer? _timer;
 
-
+  @override
   void initState() {
     super.initState();
-    // Simulate a delay for loading
+
+    _startLoading();
+  }
+
+  void _startLoading() {
     _timer = Timer.periodic(Duration(milliseconds: 50), (timer) {
       setState(() {
         progress += 0.02;
@@ -33,10 +37,28 @@ class _SplashViewState extends State<SplashView> {
           progress = 1.0;
           isLoading = false;
           _timer?.cancel();
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginView()));
+          load();
         }
       });
     });
+  }
+
+  void load() async{
+
+    var userdata = await SessionHelpers.getUserInfo();
+    // Simulate a delay for loading
+
+    if (userdata != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainView()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginView()),
+      );
+    }
   }
 
   @override
@@ -51,49 +73,55 @@ class _SplashViewState extends State<SplashView> {
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Center(
-    child: Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: screenWidth * 0.9,
-          height: screenHeight * 0.3,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(ImageHelper.logoPath),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        SizedBox(height: screenHeight * 0.02),
-        Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomText(text: 'BEANS',
-                fontFamily: 'Anton',
-                fontSize: 30.0,
-                color: Colors.black,
-                fontWeight: FontWeight.w700,
-                textAlign:  TextAlign.center
+            Container(
+              width: screenWidth * 0.9,
+              height: screenHeight * 0.3,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(ImageHelper.logoPath),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-            SizedBox(width: screenWidth * 0.02),
-            CustomText(text: 'ALERT',
-                fontFamily: 'Anton',
-                fontSize: 30.0,
-                color: ColorHelpers.accentColor,
-                fontWeight: FontWeight.w400,
-                textAlign:  TextAlign.center
+            SizedBox(height: screenHeight * 0.02),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomText(
+                  text: 'BEANS',
+                  fontFamily: 'Anton',
+                  fontSize: 30.0,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(width: screenWidth * 0.02),
+                CustomText(
+                  text: 'ALERT',
+                  fontFamily: 'Anton',
+                  fontSize: 30.0,
+                  color: ColorHelpers.accentColor,
+                  fontWeight: FontWeight.w400,
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
+            SizedBox(height: screenHeight * 0.02),
+            isLoading
+                ? Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CustomLoadingBar(
+                      progress: progress,
+                      label: 'Loading...',
+                    ),
+                  )
+                : SizedBox(),
           ],
         ),
-        SizedBox(height: screenHeight * 0.02),
-        isLoading
-            ? Padding(padding:  EdgeInsets.all(16.0),
-          child: CustomLoadingBar(progress: progress, label: 'Loading...'),
-        )
-            : SizedBox(),
-      ],
-    ),
-    ),
+      ),
     );
   }
 }
