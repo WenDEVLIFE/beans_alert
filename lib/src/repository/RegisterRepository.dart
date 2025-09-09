@@ -11,9 +11,11 @@ class RegisterRepositoryImpl implements RegisterRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
-  Future<bool> insertUser(String fullname, String email, String role, String password) async {
+  Future<bool> insertUser(String fullname, String email, String role,
+      String password) async {
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -33,5 +35,4 @@ class RegisterRepositoryImpl implements RegisterRepository {
       throw Exception('Failed to register user: $error');
     }
   }
-
 }
