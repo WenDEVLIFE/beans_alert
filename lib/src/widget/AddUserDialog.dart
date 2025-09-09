@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AddUserDialog extends StatefulWidget {
   const AddUserDialog({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class _AddUserDialogState extends State<AddUserDialog> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final List<String> _roles = ['Admin', 'User', 'Manager'];
+  final List<String> _roles = ['Admin', 'Staff'];
   String? _selectedRole;
 
   @override
@@ -37,8 +38,9 @@ class _AddUserDialogState extends State<AddUserDialog> {
                 validator: (value) => value == null || value.isEmpty ? 'Enter email' : null,
               ),
               DropdownButtonFormField<String>(
-                value: _selectedRole,
+              value: _selectedRole,
                 decoration: const InputDecoration(labelText: 'Role'),
+                icon: const FaIcon(FontAwesomeIcons.userTag), // FontAwesome icon
                 items: _roles
                     .map((role) => DropdownMenuItem(
                   value: role,
@@ -68,6 +70,7 @@ class _AddUserDialogState extends State<AddUserDialog> {
           child: const Text('Cancel'),
         ),
         ElevatedButton(
+
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               Navigator.pop(context, {

@@ -1,4 +1,5 @@
 import 'package:beans_alert/src/bloc/LoginBloc.dart';
+import 'package:beans_alert/src/bloc/UserBloc.dart';
 import 'package:beans_alert/src/services/FirebaseService.dart';
 import 'package:beans_alert/src/view/SplashView.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<LoginBloc>(
           create: (context) => LoginBloc()
+        ),
+        BlocProvider<UserBloc>(
+            create: (context) => UserBloc()
         ),
       ],
       child:  MaterialApp(

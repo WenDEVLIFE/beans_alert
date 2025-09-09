@@ -2,6 +2,7 @@ import 'package:beans_alert/src/helpers/SvgHelpers.dart';
 import 'package:beans_alert/src/widget/CustomNavigationSideBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../helpers/ColorHelpers.dart';
 import '../widget/AddUserDialog.dart';
@@ -77,10 +78,20 @@ class MainView extends StatelessWidget {
             builder: (context) => const AddUserDialog(),
           );
           if (result != null) {
+            String fullname = result['fullname'];
+            String email = result['email'];
+            String role = result['role'];
+            String password = result['password'];
+
+
           }
         },
         backgroundColor: ColorHelpers.accentColor,
-        child: const Icon(Icons.add, color: Colors.white,),
+        child:  FaIcon(
+          FontAwesomeIcons.add,
+        color: Colors.white,
+        size: 24.0,
+      ),
     ),
     );
   }
