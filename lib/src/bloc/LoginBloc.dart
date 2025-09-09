@@ -56,6 +56,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           'fullName': userData['FullName'],
         };
         SessionHelpers.saveUserInfo(userData);
+
+        emailController.clear();
+        passwordController.clear();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => MainView()),
@@ -69,7 +72,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
-  void onResetPassword(BuildContext context)  async{
+  void onResetPassword(BuildContext context) async {
     try {
       if (forgotEmailController.text.isEmpty) {
         throw Exception('Email is required');

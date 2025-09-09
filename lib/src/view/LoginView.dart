@@ -20,7 +20,7 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   late LoginBloc loginBloc;
-  bool _obscureText = false;
+  bool _obscureText = true;
 
   @override
   void initState() {
@@ -35,9 +35,7 @@ class _LoginViewState extends State<LoginView> {
 
     return Scaffold(
       body: BlocListener<LoginBloc, LoginState>(
-        listener: (context, state){
-
-        },
+        listener: (context, state) {},
         child: Center(
           child: SingleChildScrollView(
             child: Column(
@@ -101,20 +99,37 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
                 Padding(
-                    padding: EdgeInsets.all(5.0),
-                    child: Center(
-                      child: CustomTextButton(text: 'Forgot Password?', fontFamily: 'Anton', fontWeight: FontWeight.w400, fontSize: 14, textColor: Colors.black, onPressed: (){
-                        MaterialPageRoute route = MaterialPageRoute(builder: (context) =>  ForgotPasswordView());
+                  padding: EdgeInsets.all(5.0),
+                  child: Center(
+                    child: CustomTextButton(
+                      text: 'Forgot Password?',
+                      fontFamily: 'Anton',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      textColor: Colors.black,
+                      onPressed: () {
+                        MaterialPageRoute route = MaterialPageRoute(
+                          builder: (context) => ForgotPasswordView(),
+                        );
                         Navigator.push(context, route);
-                      }),
-                    )
+                      },
+                    ),
+                  ),
                 ),
 
                 Padding(
                   padding: EdgeInsets.all(20.0),
-                  child: CustomButton(hintText: 'Login', fontFamily: 'Anton', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
-                    loginBloc.onLogin(context);
-                  }, width: screenWidth * 0.60, height: screenHeight * 0.06,),
+                  child: CustomButton(
+                    hintText: 'Login',
+                    fontFamily: 'Anton',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    onPressed: () {
+                      loginBloc.onLogin(context);
+                    },
+                    width: screenWidth * 0.60,
+                    height: screenHeight * 0.06,
+                  ),
                 ),
               ],
             ),
