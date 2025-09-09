@@ -1,3 +1,4 @@
+import 'package:beans_alert/src/bloc/UserBloc.dart';
 import 'package:beans_alert/src/helpers/SvgHelpers.dart';
 import 'package:beans_alert/src/widget/CustomNavigationSideBar.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +9,22 @@ import '../helpers/ColorHelpers.dart';
 import '../widget/AddUserDialog.dart';
 import '../widget/CustomText.dart';
 
-class MainView extends StatelessWidget {
+class MainView extends StatefulWidget {
   const MainView({Key? key}) : super(key: key);
+
+  @override
+  State<MainView> createState() => _MainViewState();
+}
+
+class _MainViewState extends State<MainView> {
+  late UserBloc  userbloc;
+
+  @override
+  void initState() {
+    super.initState();
+    userbloc = UserBloc();
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,11 +93,12 @@ class MainView extends StatelessWidget {
             builder: (context) => const AddUserDialog(),
           );
           if (result != null) {
-            String fullname = result['fullname'];
+            String fullname = result['fullName'];
             String email = result['email'];
             String role = result['role'];
             String password = result['password'];
 
+            userbloc.insertUser(fullname, email, role, password);
 
           }
         },
