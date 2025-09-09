@@ -19,9 +19,16 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  late LoginBloc loginBloc;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loginBloc = BlocProvider.of<LoginBloc>(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +81,8 @@ class _LoginViewState extends State<LoginView> {
                 Padding(
                   padding: EdgeInsets.all(16.0),
                   child: CustomTextField(
-                    controller: _usernameController,
-                    hintText: 'Username',
+                    controller: loginBloc.emailController,
+                    hintText: 'Email',
                     borderColor: Colors.black45,
                     fillColor: Colors.white,
                   ),
@@ -83,7 +90,7 @@ class _LoginViewState extends State<LoginView> {
                 Padding(
                   padding: EdgeInsets.all(16.0),
                   child: CustomPasswordField(
-                    controller: _passwordController,
+                    controller: loginBloc.passwordController,
                     hintText: 'Password',
                     borderColor: Colors.black45,
                     fillColor: Colors.white,
@@ -107,8 +114,7 @@ class _LoginViewState extends State<LoginView> {
                 Padding(
                   padding: EdgeInsets.all(20.0),
                   child: CustomButton(hintText: 'Login', fontFamily: 'Anton', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
-
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainView()));
+                    loginBloc.onLogin(context);
                   }, width: screenWidth * 0.60, height: screenHeight * 0.06,),
                 ),
               ],
