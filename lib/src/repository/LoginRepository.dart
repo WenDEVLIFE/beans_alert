@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 abstract class LoginRepository {
   Future<Map<String, dynamic>> login(String email, String password);
@@ -30,6 +31,15 @@ class LoginRepositoryImpl implements LoginRepository {
       }
     } catch (error) {
       throw Exception('Failed to login: $error');
+    }
+  }
+
+  Future<void> resetPassword(String text) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: text);
+      Fluttertoast.showToast(msg: 'Password reset email sent');
+    } catch (error) {
+      throw Exception('Failed to send reset email: $error');
     }
   }
 

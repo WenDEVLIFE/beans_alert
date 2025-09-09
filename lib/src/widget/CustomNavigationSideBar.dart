@@ -1,4 +1,5 @@
 import 'package:beans_alert/src/helpers/ColorHelpers.dart';
+import 'package:beans_alert/src/helpers/SessionHelpers.dart';
 import 'package:beans_alert/src/helpers/SvgHelpers.dart';
 import 'package:beans_alert/src/view/CalendarView.dart';
 import 'package:beans_alert/src/view/LoginView.dart';
@@ -120,6 +121,8 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
                         content: 'Are you sure you want to logout?',
                         onConfirm: () {
                           Navigator.pop(dialogContext);
+
+                          SessionHelpers.clearUserInfo();
                           Navigator.pushReplacement(dialogContext, MaterialPageRoute(builder: (context) => LoginView()));
 
                         },

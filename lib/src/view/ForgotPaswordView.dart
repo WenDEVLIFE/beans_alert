@@ -1,43 +1,23 @@
-import 'package:beans_alert/src/bloc/LoginBloc.dart';
-import 'package:beans_alert/src/helpers/ColorHelpers.dart';
-import 'package:beans_alert/src/widget/CustomButton.dart';
-import 'package:beans_alert/src/widget/CustomPasswordField.dart';
-import 'package:beans_alert/src/widget/CustomTextButton.dart';
-import 'package:beans_alert/src/widget/CustomTextField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../bloc/LoginBloc.dart';
+import '../helpers/ColorHelpers.dart';
 import '../helpers/ImageHelper.dart';
+import '../widget/CustomButton.dart';
 import '../widget/CustomText.dart';
-import 'ForgotPaswordView.dart';
+import '../widget/CustomTextField.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
-
-  @override
-  State<LoginView> createState() => _LoginViewState();
-}
-
-class _LoginViewState extends State<LoginView> {
-  late LoginBloc loginBloc;
-  bool _obscureText = false;
-
-  @override
-  void initState() {
-    super.initState();
-    loginBloc = BlocProvider.of<LoginBloc>(context);
-  }
-
+class ForgotPasswordView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
+    final loginBloc = BlocProvider.of<LoginBloc>(context);
+
     return Scaffold(
       body: BlocListener<LoginBloc, LoginState>(
-        listener: (context, state){
-
-        },
+        listener: (context, state) {},
         child: Center(
           child: SingleChildScrollView(
             child: Column(
@@ -86,35 +66,18 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: CustomPasswordField(
-                    controller: loginBloc.passwordController,
-                    hintText: 'Password',
-                    borderColor: Colors.black45,
-                    fillColor: Colors.white,
-                    obscureText: _obscureText,
-                    onIconPressed: () {
-                      setState(() {
-                        _obscureText = !_obscureText;
-                      });
-                    },
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.all(5.0),
-                    child: Center(
-                      child: CustomTextButton(text: 'Forgot Password?', fontFamily: 'Anton', fontWeight: FontWeight.w400, fontSize: 14, textColor: Colors.black, onPressed: (){
-                        MaterialPageRoute route = MaterialPageRoute(builder: (context) =>  ForgotPasswordView());
-                        Navigator.push(context, route);
-                      }),
-                    )
-                ),
-
-                Padding(
                   padding: EdgeInsets.all(20.0),
-                  child: CustomButton(hintText: 'Login', fontFamily: 'Anton', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
-                    loginBloc.onLogin(context);
-                  }, width: screenWidth * 0.60, height: screenHeight * 0.06,),
+                  child: CustomButton(
+                    hintText: 'Reset Password',
+                    fontFamily: 'Anton',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    onPressed: () {
+                      loginBloc.onResetPassword(context);
+                    },
+                    width: screenWidth * 0.60,
+                    height: screenHeight * 0.06,
+                  ),
                 ),
               ],
             ),

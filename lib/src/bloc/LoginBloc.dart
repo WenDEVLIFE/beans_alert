@@ -2,7 +2,6 @@ import 'package:beans_alert/src/helpers/SessionHelpers.dart';
 import 'package:beans_alert/src/repository/LoginRepository.dart';
 import 'package:beans_alert/src/view/MainView.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -24,6 +23,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController forgotEmailController = TextEditingController();
 
   LoginBloc() : super(LoginInitial());
 
@@ -64,6 +64,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         Fluttertoast.showToast(msg: 'Invalid login credentials');
         throw Exception('Invalid login credentials');
       }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  void onResetPassword(BuildContext context)  async{
+    try {
+      if (forgotEmailController.text.isEmpty) {
+        throw Exception('Email is required');
+      }
+
+      await loginRepository.resetPassword(forgotEmailController.text);
+      Navigator.pop(context);
+      Fluttertoast.showToast(msg: 'Password reset email sent');
+      Navigator.pop(context);
     } catch (e) {
       rethrow;
     }
