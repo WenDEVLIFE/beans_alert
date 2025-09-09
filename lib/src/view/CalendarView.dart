@@ -2,8 +2,10 @@ import 'package:beans_alert/src/helpers/SvgHelpers.dart';
 import 'package:beans_alert/src/widget/CustomNavigationSideBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../helpers/ColorHelpers.dart';
+import '../widget/CalendarWidget.dart';
 import '../widget/CustomText.dart';
 
 class CalendarView extends StatelessWidget {
@@ -51,12 +53,35 @@ class CalendarView extends StatelessWidget {
         ),
       ),
       drawer: CustomNavigationSideBar(),
-      body: Center(
-        child: Text(
-          'Calendar View',
-          style: TextStyle(fontSize: 24),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: screenHeight * 0.02, left: screenWidth * 0.04, right: screenWidth * 0.04),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: Calendar(
+                    onDateSelected: (selectedDate) {
+                      // Handle date selection
+                      print("Selected date: $selectedDate");
+                    },
+                  )
+              ),
+            ),
+          ],
         ),
       ),
+        floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+
+    },
+    backgroundColor: ColorHelpers.accentColor,
+    child: FaIcon(
+    FontAwesomeIcons.plus,
+    color: Colors.white,
+    size: screenWidth * 0.06,
+    ),
+    ),
     );
   }
 }
