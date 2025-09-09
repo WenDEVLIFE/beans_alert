@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../helpers/ColorHelpers.dart';
+import '../widget/AddUserDialog.dart';
 import '../widget/CustomText.dart';
 
 class MainView extends StatelessWidget {
@@ -51,12 +52,36 @@ class MainView extends StatelessWidget {
       ),
       ),
       drawer: CustomNavigationSideBar(),
-      body: Center(
-        child: Text(
-          'User Management View',
-          style: TextStyle(fontSize: 24),
-        ),
+      body: Column(
+            children: [
+              SizedBox(height: screenHeight * 0.02),
+           Align(
+             alignment: Alignment.centerLeft,
+             child:    Padding(
+               padding: EdgeInsets.only(left: screenWidth * 0.05),
+               child:CustomText(text: 'User Management View',
+                   fontFamily: 'Poppins',
+                   fontSize: 30.0,
+                   color: Colors.black,
+                   fontWeight: FontWeight.w700,
+                   textAlign:  TextAlign.center
+               ),
+             ),
+           ),
+            ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final result = await showDialog(
+            context: context,
+            builder: (context) => const AddUserDialog(),
+          );
+          if (result != null) {
+          }
+        },
+        backgroundColor: ColorHelpers.accentColor,
+        child: const Icon(Icons.add, color: Colors.white,),
+    ),
     );
   }
 }
