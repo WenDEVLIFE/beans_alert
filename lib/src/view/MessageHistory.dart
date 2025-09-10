@@ -4,10 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../helpers/ColorHelpers.dart';
+import '../widget/CustomSearchBar.dart';
 import '../widget/CustomText.dart';
 
-class MessageHistory extends StatelessWidget {
+class MessageHistory extends StatefulWidget {
   const MessageHistory({Key? key}) : super(key: key);
+
+  @override
+  State<MessageHistory> createState() => _MessageHistoryState();
+
+}
+
+class _MessageHistoryState extends State<MessageHistory> {
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +61,40 @@ class MessageHistory extends StatelessWidget {
       ),
       drawer: CustomNavigationSideBar(),
       body: Center(
-        child: Text(
-          'Message History View',
-          style: TextStyle(fontSize: 24),
-        ),
+        child: Column(
+          children: [
+            // Search Bar
+            CustomSearchBar(
+              hintText: 'Search messages...',
+              searchQuery: _searchQuery,
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+            ),
+            // Message List
+            Expanded(
+              child: ListView.builder(
+                itemCount: 20, // Example item count
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: ColorHelpers.accentColor,
+                      child: Text('U$index'),
+                    ),
+                    title: Text('User $index'),
+                    subtitle: Text('This is a preview of message $index.'),
+                    trailing: Text('12:00 PM'),
+                    onTap: () {
+                      // Handle message tap
+                    },
+                  );
+                }
+              ),
+            ),
+          ],
+        )
       ),
     );
   }
