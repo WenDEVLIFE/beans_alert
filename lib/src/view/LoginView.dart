@@ -34,6 +34,7 @@ class _LoginViewState extends State<LoginView> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: ColorHelpers.customblack1,
       body: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {},
         child: Center(
@@ -59,7 +60,7 @@ class _LoginViewState extends State<LoginView> {
                       text: 'BEANS',
                       fontFamily: 'Anton',
                       fontSize: 30.0,
-                      color: Colors.black,
+                      color: ColorHelpers.secondaryColor,
                       fontWeight: FontWeight.w700,
                       textAlign: TextAlign.center,
                     ),

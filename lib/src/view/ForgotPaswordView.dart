@@ -16,6 +16,7 @@ class ForgotPasswordView extends StatelessWidget {
     final loginBloc = BlocProvider.of<LoginBloc>(context);
 
     return Scaffold(
+      backgroundColor: ColorHelpers.customblack1,
       body: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {},
         child: Center(
@@ -41,7 +42,7 @@ class ForgotPasswordView extends StatelessWidget {
                       text: 'BEANS',
                       fontFamily: 'Anton',
                       fontSize: 30.0,
-                      color: Colors.black,
+                      color: ColorHelpers.secondaryColor,
                       fontWeight: FontWeight.w700,
                       textAlign: TextAlign.center,
                     ),

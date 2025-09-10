@@ -107,7 +107,10 @@ class _AddUserDialogState extends State<AddUserDialog>
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Colors.white, Colors.grey.shade50],
+                    colors: [
+                      ColorHelpers.primaryColor,
+                      ColorHelpers.primaryColor.withOpacity(0.9),
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [

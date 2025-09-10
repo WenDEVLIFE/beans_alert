@@ -28,7 +28,10 @@ class _CalendarState extends State<Calendar> {
   List<DateTime> _daysInMonth(DateTime month) {
     // final firstDay = DateTime(month.year, month.month, 1);
     final lastDay = DateTime(month.year, month.month + 1, 0);
-    return List.generate(lastDay.day, (i) => DateTime(month.year, month.month, i + 1));
+    return List.generate(
+      lastDay.day,
+      (i) => DateTime(month.year, month.month, i + 1),
+    );
   }
 
   @override
@@ -39,7 +42,7 @@ class _CalendarState extends State<Calendar> {
     final weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     return Card(
-      color: Colors.white,
+      color: ColorHelpers.primaryColor,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -51,10 +54,18 @@ class _CalendarState extends State<Calendar> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  icon: FaIcon(FontAwesomeIcons.chevronLeft, size: 20, color: Colors.black,),
+                  icon: FaIcon(
+                    FontAwesomeIcons.chevronLeft,
+                    size: 20,
+                    color: ColorHelpers.secondaryColor,
+                  ),
                   onPressed: () {
                     setState(() {
-                      _focusedDay = DateTime(_focusedDay.year, _focusedDay.month - 1, 1);
+                      _focusedDay = DateTime(
+                        _focusedDay.year,
+                        _focusedDay.month - 1,
+                        1,
+                      );
                     });
                   },
                 ),
@@ -62,15 +73,23 @@ class _CalendarState extends State<Calendar> {
                   text: DateFormat.yMMMM().format(_focusedDay),
                   fontFamily: 'Roboto',
                   fontSize: 18.0,
-                  color: Colors.black,
+                  color: ColorHelpers.secondaryColor,
                   fontWeight: FontWeight.w700,
                   textAlign: TextAlign.left,
                 ),
                 IconButton(
-                  icon: FaIcon(FontAwesomeIcons.chevronRight, size: 20, color: Colors.black,),
+                  icon: FaIcon(
+                    FontAwesomeIcons.chevronRight,
+                    size: 20,
+                    color: ColorHelpers.secondaryColor,
+                  ),
                   onPressed: () {
                     setState(() {
-                      _focusedDay = DateTime(_focusedDay.year, _focusedDay.month + 1, 1);
+                      _focusedDay = DateTime(
+                        _focusedDay.year,
+                        _focusedDay.month + 1,
+                        1,
+                      );
                     });
                   },
                 ),
@@ -80,18 +99,20 @@ class _CalendarState extends State<Calendar> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: weekDays
-                  .map((d) => Expanded(
-                child: Center(
-                  child: CustomText(
-                    text: d,
-                    fontFamily: 'Roboto',
-                    fontSize: 18.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-              ))
+                  .map(
+                    (d) => Expanded(
+                      child: Center(
+                        child: CustomText(
+                          text: d,
+                          fontFamily: 'Roboto',
+                          fontSize: 18.0,
+                          color: ColorHelpers.secondaryColor,
+                          fontWeight: FontWeight.w700,
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
             SizedBox(height: 8),
@@ -110,8 +131,17 @@ class _CalendarState extends State<Calendar> {
                   return SizedBox.shrink();
                 }
                 final day = days[index - days.first.weekday % 7];
-                final isSelected = _selectedDay != null && day.year == _selectedDay!.year && day.month == _selectedDay!.month && day.day == _selectedDay!.day;
-                final isNotAvailable = notAvailableDates.any((d) => d.year == day.year && d.month == day.month && d.day == day.day);
+                final isSelected =
+                    _selectedDay != null &&
+                    day.year == _selectedDay!.year &&
+                    day.month == _selectedDay!.month &&
+                    day.day == _selectedDay!.day;
+                final isNotAvailable = notAvailableDates.any(
+                  (d) =>
+                      d.year == day.year &&
+                      d.month == day.month &&
+                      d.day == day.day,
+                );
                 return GestureDetector(
                   onTap: () {
                     if (!isNotAvailable) {
@@ -137,7 +167,7 @@ class _CalendarState extends State<Calendar> {
                         text: '${day.day}',
                         fontFamily: 'Roboto',
                         fontSize: 18.0,
-                        color: Colors.black,
+                        color: ColorHelpers.secondaryColor,
                         fontWeight: FontWeight.w700,
                         textAlign: TextAlign.left,
                       ),

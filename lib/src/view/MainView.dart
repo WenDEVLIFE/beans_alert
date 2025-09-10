@@ -75,7 +75,9 @@ class _MainViewState extends State<MainView> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: ColorHelpers.customblack1,
       appBar: AppBar(
+        backgroundColor: ColorHelpers.primaryColor,
         leading: Builder(
           builder: (context) => IconButton(
             icon: SvgPicture.asset(
@@ -83,7 +85,7 @@ class _MainViewState extends State<MainView> {
               width: screenWidth * 0.06,
               height: screenWidth * 0.06,
               colorFilter: const ColorFilter.mode(
-                Colors.black,
+                ColorHelpers.secondaryColor,
                 BlendMode.srcIn,
               ),
             ),
@@ -97,7 +99,7 @@ class _MainViewState extends State<MainView> {
               text: 'BEANS',
               fontFamily: 'Anton',
               fontSize: screenWidth * 0.075,
-              color: Colors.black,
+              color: ColorHelpers.secondaryColor,
               fontWeight: FontWeight.w700,
               textAlign: TextAlign.center,
             ),
@@ -125,7 +127,7 @@ class _MainViewState extends State<MainView> {
                 text: 'User Management View',
                 fontFamily: 'Poppins',
                 fontSize: screenWidth * 0.075,
-                color: Colors.black,
+                color: ColorHelpers.secondaryColor,
                 fontWeight: FontWeight.w700,
                 textAlign: TextAlign.center,
               ),
@@ -152,14 +154,14 @@ class _MainViewState extends State<MainView> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white,
-                  ColorHelpers.accentColor.withOpacity(0.1),
+                  ColorHelpers.primaryColor,
+                  ColorHelpers.primaryColor.withOpacity(0.8),
                 ],
               ),
               borderRadius: BorderRadius.circular(screenWidth * 0.03),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withOpacity(0.3),
                   spreadRadius: 0,
                   blurRadius: screenWidth * 0.025,
                   offset: Offset(0, screenHeight * 0.0025),
@@ -214,14 +216,13 @@ class _MainViewState extends State<MainView> {
                           color: Colors.grey.shade400,
                         ),
                         SizedBox(height: screenHeight * 0.02),
-                        Text(
-                          _searchQuery.isEmpty
-                              ? 'No users found'
-                              : 'No users match your search',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.04,
-                            color: Colors.grey.shade600,
-                          ),
+                        CustomText(
+                          text: 'No users found',
+                          fontFamily: 'Poppins',
+                          fontSize: screenWidth * 0.04,
+                          color: ColorHelpers.secondaryColor,
+                          fontWeight: FontWeight.w500,
+                          textAlign: TextAlign.center,
                         ),
                         SizedBox(height: screenHeight * 0.02),
                         ElevatedButton.icon(
@@ -340,8 +341,9 @@ class _MainViewState extends State<MainView> {
           label,
           style: TextStyle(
             fontSize: screenWidth * 0.03,
-            color: Colors.grey.shade600,
+            color: ColorHelpers.secondaryColor.withOpacity(0.7),
           ),
+          textAlign: TextAlign.center,
         ),
       ],
     );

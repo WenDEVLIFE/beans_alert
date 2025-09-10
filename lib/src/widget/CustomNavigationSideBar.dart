@@ -16,7 +16,8 @@ import '../view/ContactView.dart';
 
 class CustomNavigationSideBar extends StatefulWidget {
   @override
-  State<CustomNavigationSideBar> createState() => _CustomNavigationSideBarState();
+  State<CustomNavigationSideBar> createState() =>
+      _CustomNavigationSideBarState();
 }
 
 class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
@@ -42,9 +43,7 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(
-              color: ColorHelpers.primaryColor,
-            ),
+            decoration: BoxDecoration(color: ColorHelpers.primaryColor),
             child: Center(
               child: Container(
                 width: screenWidth * 0.9,
@@ -69,7 +68,7 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
                   width: 24,
                   height: 24,
                   colorFilter: ColorFilter.mode(
-                    Colors.white,
+                    ColorHelpers.secondaryColor,
                     BlendMode.srcIn,
                   ),
                 ),
@@ -77,7 +76,7 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
                   text: item.title,
                   fontFamily: 'Anton',
                   fontSize: 20,
-                  color: Colors.white,
+                  color: ColorHelpers.secondaryColor,
                   fontWeight: FontWeight.w700,
                   textAlign: TextAlign.left,
                 ),
@@ -90,27 +89,37 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
 
                   if (index == 0) {
                     // Navigate to User Management
-                    Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => MainView()));
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => MainView()),
+                    );
                   } else if (index == 1) {
                     // Navigate to Send Message
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => SendMessageView()));
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SendMessageView(),
+                      ),
+                    );
                   } else if (index == 2) {
                     // Navigate to Message History
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => MessageHistory()));
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => MessageHistory()),
+                    );
                   } else if (index == 3) {
                     // Navigate to Contacts
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => ContactView()));
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => ContactView()),
+                    );
                   } else if (index == 4) {
                     // Navigate to Calendar
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => CalendarView()));
-                  }
-
-                  else if (index == 5) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => CalendarView()),
+                    );
+                  } else if (index == 5) {
                     final mainContext = context; // Save the main screen context
 
                     // Show the confirmation dialog
@@ -123,8 +132,12 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
                           Navigator.pop(dialogContext);
 
                           SessionHelpers.clearUserInfo();
-                          Navigator.pushReplacement(dialogContext, MaterialPageRoute(builder: (context) => LoginView()));
-
+                          Navigator.pushReplacement(
+                            dialogContext,
+                            MaterialPageRoute(
+                              builder: (context) => LoginView(),
+                            ),
+                          );
                         },
                         onCancel: () {
                           Navigator.pop(dialogContext);
@@ -132,7 +145,6 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
                       ),
                     );
                   }
-
                 },
               ),
             );
@@ -142,4 +154,3 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
     );
   }
 }
-

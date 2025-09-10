@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../helpers/ColorHelpers.dart';
+
 class CustomSearchBar extends StatefulWidget {
   final String hintText;
   final ValueChanged<String> onChanged;
@@ -78,20 +80,25 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
             TextStyle(
               fontSize: screenWidth * 0.04,
               fontWeight: FontWeight.w500,
+              color: ColorHelpers.secondaryColor,
             ),
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle:
               widget.hintStyle ??
               TextStyle(
-                color: widget.hintColor ?? Colors.grey.shade400,
+                color:
+                    widget.hintColor ??
+                    ColorHelpers.secondaryColor.withOpacity(0.5),
                 fontSize: screenWidth * 0.04,
               ),
           prefixIcon: Padding(
             padding: EdgeInsets.all(screenWidth * 0.03),
             child: FaIcon(
               FontAwesomeIcons.magnifyingGlass,
-              color: widget.iconColor ?? Colors.grey.shade600,
+              color:
+                  widget.iconColor ??
+                  ColorHelpers.secondaryColor.withOpacity(0.7),
               size: screenWidth * 0.045,
             ),
           ),
@@ -99,7 +106,9 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               ? IconButton(
                   icon: FaIcon(
                     FontAwesomeIcons.xmark,
-                    color: widget.iconColor ?? Colors.grey.shade600,
+                    color:
+                        widget.iconColor ??
+                        ColorHelpers.secondaryColor.withOpacity(0.7),
                     size: screenWidth * 0.04,
                   ),
                   onPressed: () {
@@ -109,7 +118,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 )
               : null,
           filled: true,
-          fillColor: widget.fillColor ?? Colors.grey.shade100,
+          fillColor:
+              widget.fillColor ?? ColorHelpers.primaryColor.withOpacity(0.8),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(
               widget.borderRadius ?? screenWidth * 0.06,

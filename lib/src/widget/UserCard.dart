@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:beans_alert/src/model/UserModel.dart';
 import 'package:beans_alert/src/bloc/UserBloc.dart';
+import 'package:beans_alert/src/helpers/ColorHelpers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter/material.dart';
 
 class UserCard extends StatefulWidget {
   final UserModel user;
@@ -298,7 +300,10 @@ class _UserCardState extends State<UserCard>
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.white, Colors.grey.shade50],
+                  colors: [
+                    ColorHelpers.primaryColor,
+                    ColorHelpers.primaryColor.withOpacity(0.9),
+                  ],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [

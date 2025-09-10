@@ -12,7 +12,6 @@ class MessageHistory extends StatefulWidget {
 
   @override
   State<MessageHistory> createState() => _MessageHistoryState();
-
 }
 
 class _MessageHistoryState extends State<MessageHistory> {
@@ -23,7 +22,9 @@ class _MessageHistoryState extends State<MessageHistory> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: ColorHelpers.customblack1,
       appBar: AppBar(
+        backgroundColor: ColorHelpers.primaryColor,
         leading: Builder(
           builder: (context) => IconButton(
             icon: SvgPicture.asset(
@@ -31,7 +32,7 @@ class _MessageHistoryState extends State<MessageHistory> {
               width: 24,
               height: 24,
               colorFilter: ColorFilter.mode(
-                Colors.black,
+                ColorHelpers.secondaryColor,
                 BlendMode.srcIn,
               ),
             ),
@@ -41,20 +42,22 @@ class _MessageHistoryState extends State<MessageHistory> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomText(text: 'BEANS',
-                fontFamily: 'Anton',
-                fontSize: 30.0,
-                color: Colors.black,
-                fontWeight: FontWeight.w700,
-                textAlign:  TextAlign.center
+            CustomText(
+              text: 'BEANS',
+              fontFamily: 'Anton',
+              fontSize: 30.0,
+              color: ColorHelpers.secondaryColor,
+              fontWeight: FontWeight.w700,
+              textAlign: TextAlign.center,
             ),
             SizedBox(width: screenWidth * 0.02),
-            CustomText(text: 'ALERT',
-                fontFamily: 'Anton',
-                fontSize: 30.0,
-                color: ColorHelpers.accentColor,
-                fontWeight: FontWeight.w400,
-                textAlign:  TextAlign.center
+            CustomText(
+              text: 'ALERT',
+              fontFamily: 'Anton',
+              fontSize: 30.0,
+              color: ColorHelpers.accentColor,
+              fontWeight: FontWeight.w400,
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -90,11 +93,11 @@ class _MessageHistoryState extends State<MessageHistory> {
                       // Handle message tap
                     },
                   );
-                }
+                },
               ),
             ),
           ],
-        )
+        ),
       ),
     );
   }

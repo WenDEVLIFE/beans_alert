@@ -169,14 +169,19 @@ class _ContactViewState extends State<ContactView> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: ColorHelpers.customblack1,
       appBar: AppBar(
+        backgroundColor: ColorHelpers.primaryColor,
         leading: Builder(
           builder: (context) => IconButton(
             icon: SvgPicture.asset(
               SvgHelpers.menulist,
               width: 24,
               height: 24,
-              colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                ColorHelpers.secondaryColor,
+                BlendMode.srcIn,
+              ),
             ),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
@@ -188,7 +193,7 @@ class _ContactViewState extends State<ContactView> {
               text: 'BEANS',
               fontFamily: 'Anton',
               fontSize: 30.0,
-              color: Colors.black,
+              color: ColorHelpers.secondaryColor,
               fontWeight: FontWeight.w700,
               textAlign: TextAlign.center,
             ),
@@ -216,7 +221,7 @@ class _ContactViewState extends State<ContactView> {
                 text: 'Contact Management',
                 fontFamily: 'Poppins',
                 fontSize: screenWidth * 0.065,
-                color: Colors.black,
+                color: ColorHelpers.secondaryColor,
                 fontWeight: FontWeight.w700,
                 textAlign: TextAlign.left,
               ),
@@ -243,11 +248,11 @@ class _ContactViewState extends State<ContactView> {
             ),
             padding: EdgeInsets.all(screenWidth * 0.04),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: ColorHelpers.primaryColor,
               borderRadius: BorderRadius.circular(screenWidth * 0.03),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withOpacity(0.3),
                   spreadRadius: 0,
                   blurRadius: screenWidth * 0.025,
                   offset: Offset(0, screenHeight * 0.0025),
@@ -295,14 +300,14 @@ class _ContactViewState extends State<ContactView> {
                         FaIcon(
                           FontAwesomeIcons.searchLocation,
                           size: screenWidth * 0.16,
-                          color: Colors.grey.shade400,
+                          color: ColorHelpers.secondaryColor.withOpacity(0.4),
                         ),
                         SizedBox(height: screenHeight * 0.02),
                         CustomText(
                           text: 'No contacts found',
                           fontFamily: 'Poppins',
                           fontSize: screenWidth * 0.045,
-                          color: Colors.grey.shade600,
+                          color: ColorHelpers.secondaryColor.withOpacity(0.6),
                           fontWeight: FontWeight.w500,
                           textAlign: TextAlign.center,
                         ),
@@ -311,7 +316,7 @@ class _ContactViewState extends State<ContactView> {
                           text: 'Try adjusting your search criteria',
                           fontFamily: 'Poppins',
                           fontSize: screenWidth * 0.035,
-                          color: Colors.grey.shade500,
+                          color: ColorHelpers.secondaryColor.withOpacity(0.5),
                           fontWeight: FontWeight.w400,
                           textAlign: TextAlign.center,
                         ),
@@ -375,7 +380,7 @@ class _ContactViewState extends State<ContactView> {
           label,
           style: TextStyle(
             fontSize: screenWidth * 0.028,
-            color: Colors.grey.shade600,
+            color: ColorHelpers.secondaryColor.withOpacity(0.7),
           ),
           textAlign: TextAlign.center,
         ),

@@ -14,7 +14,9 @@ class SendMessageView extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: ColorHelpers.customblack1,
       appBar: AppBar(
+        backgroundColor: ColorHelpers.primaryColor,
         leading: Builder(
           builder: (context) => IconButton(
             icon: SvgPicture.asset(
@@ -22,7 +24,7 @@ class SendMessageView extends StatelessWidget {
               width: 24,
               height: 24,
               colorFilter: ColorFilter.mode(
-                Colors.black,
+                ColorHelpers.secondaryColor,
                 BlendMode.srcIn,
               ),
             ),
@@ -32,29 +34,35 @@ class SendMessageView extends StatelessWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomText(text: 'BEANS',
-                fontFamily: 'Anton',
-                fontSize: 30.0,
-                color: Colors.black,
-                fontWeight: FontWeight.w700,
-                textAlign:  TextAlign.center
+            CustomText(
+              text: 'BEANS',
+              fontFamily: 'Anton',
+              fontSize: 30.0,
+              color: ColorHelpers.secondaryColor,
+              fontWeight: FontWeight.w700,
+              textAlign: TextAlign.center,
             ),
             SizedBox(width: screenWidth * 0.02),
-            CustomText(text: 'ALERT',
-                fontFamily: 'Anton',
-                fontSize: 30.0,
-                color: ColorHelpers.accentColor,
-                fontWeight: FontWeight.w400,
-                textAlign:  TextAlign.center
+            CustomText(
+              text: 'ALERT',
+              fontFamily: 'Anton',
+              fontSize: 30.0,
+              color: ColorHelpers.accentColor,
+              fontWeight: FontWeight.w400,
+              textAlign: TextAlign.center,
             ),
           ],
         ),
       ),
       drawer: CustomNavigationSideBar(),
       body: Center(
-        child: Text(
-          'Send Message View',
-          style: TextStyle(fontSize: 24),
+        child: CustomText(
+          text: 'Send Message View',
+          fontFamily: 'Poppins',
+          fontSize: 24.0,
+          color: ColorHelpers.secondaryColor,
+          fontWeight: FontWeight.w600,
+          textAlign: TextAlign.center,
         ),
       ),
     );

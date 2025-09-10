@@ -1,3 +1,4 @@
+import 'package:beans_alert/src/helpers/ColorHelpers.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -53,7 +54,7 @@ class CustomPasswordField extends StatelessWidget {
         enableSuggestions: false,
         style: TextStyle(
           fontFamily: 'Anton',
-          color: Colors.black,
+          color: ColorHelpers.secondaryColor,
           fontSize: screenWidth * 0.04,
           fontWeight: FontWeight.w400,
         ),
@@ -61,7 +62,7 @@ class CustomPasswordField extends StatelessWidget {
           hintText: hintText,
           hintStyle: TextStyle(
             fontFamily: 'Anton',
-            color: Colors.black.withOpacity(0.6),
+            color: ColorHelpers.secondaryColor.withOpacity(0.6),
             fontSize: screenWidth * 0.04,
             fontWeight: FontWeight.w400,
           ),
@@ -70,7 +71,9 @@ class CustomPasswordField extends StatelessWidget {
                   padding: EdgeInsets.all(screenWidth * 0.03),
                   child: FaIcon(
                     prefixIcon!,
-                    color: iconColor ?? Colors.black.withOpacity(0.7),
+                    color:
+                        iconColor ??
+                        ColorHelpers.secondaryColor.withOpacity(0.7),
                     size: screenWidth * 0.05,
                   ),
                 )

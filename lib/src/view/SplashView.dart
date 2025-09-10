@@ -43,8 +43,7 @@ class _SplashViewState extends State<SplashView> {
     });
   }
 
-  void load() async{
-
+  void load() async {
     var userdata = await SessionHelpers.getUserInfo();
     // Simulate a delay for loading
 
@@ -72,6 +71,7 @@ class _SplashViewState extends State<SplashView> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: ColorHelpers.customblack1,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -94,7 +94,7 @@ class _SplashViewState extends State<SplashView> {
                   text: 'BEANS',
                   fontFamily: 'Anton',
                   fontSize: 30.0,
-                  color: Colors.black,
+                  color: ColorHelpers.secondaryColor,
                   fontWeight: FontWeight.w700,
                   textAlign: TextAlign.center,
                 ),
