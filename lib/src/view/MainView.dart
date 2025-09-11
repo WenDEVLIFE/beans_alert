@@ -92,27 +92,30 @@ class _MainViewState extends State<MainView> {
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomText(
-              text: 'BEANS',
-              fontFamily: 'Anton',
-              fontSize: screenWidth * 0.075,
-              color: ColorHelpers.secondaryColor,
-              fontWeight: FontWeight.w700,
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(width: screenWidth * 0.02),
-            CustomText(
-              text: 'ALERT',
-              fontFamily: 'Anton',
-              fontSize: screenWidth * 0.075,
-              color: ColorHelpers.accentColor,
-              fontWeight: FontWeight.w400,
-              textAlign: TextAlign.center,
-            ),
-          ],
+        title: Align(
+          alignment: Alignment.centerRight,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomText(
+                text: 'BEANS',
+                fontFamily: 'Anton',
+                fontSize: 30.0,
+                color: ColorHelpers.secondaryColor,
+                fontWeight: FontWeight.w700,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(width: screenWidth * 0.02),
+              CustomText(
+                text: 'ALERT',
+                fontFamily: 'Anton',
+                fontSize: 30.0,
+                color: ColorHelpers.accentColor,
+                fontWeight: FontWeight.w400,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
       drawer: CustomNavigationSideBar(),

@@ -1,7 +1,7 @@
 import 'package:beans_alert/src/helpers/ColorHelpers.dart';
 import 'package:beans_alert/src/helpers/SessionHelpers.dart';
 import 'package:beans_alert/src/helpers/SvgHelpers.dart';
-import 'package:beans_alert/src/view/CalendarView.dart';
+import 'package:beans_alert/src/view/ScheduleView.dart';
 import 'package:beans_alert/src/view/LoginView.dart';
 import 'package:beans_alert/src/view/MainView.dart';
 import 'package:beans_alert/src/view/MessageHistory.dart';
@@ -29,7 +29,7 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
     DrawerItem(SvgHelpers.addEmail, 'Send Message'),
     DrawerItem(SvgHelpers.email, 'Message History'),
     DrawerItem(SvgHelpers.phonebook, 'Contacts'),
-    DrawerItem(SvgHelpers.calendar, 'Calendar'),
+    DrawerItem(SvgHelpers.calendar, 'Scheduling'),
     DrawerItem(SvgHelpers.logout, 'Logout'),
   ];
 
@@ -46,8 +46,8 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
             decoration: BoxDecoration(color: ColorHelpers.primaryColor),
             child: Center(
               child: Container(
-                width: screenWidth * 0.9,
-                height: screenHeight * 0.3,
+                width: screenWidth * 0.4,
+                height: screenHeight * 0.2,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(ImageHelper.logoPath),

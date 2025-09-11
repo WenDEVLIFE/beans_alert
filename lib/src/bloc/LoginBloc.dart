@@ -47,7 +47,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (userData.isNotEmpty) {
         // Login successful, you can handle user data here
         debugPrint('Login successful: $userData');
-        Fluttertoast.showToast(msg: 'Login successful');
+        await Fluttertoast.showToast(msg: 'Login successful');
 
         userData = {
           'email': emailController.text,
@@ -64,11 +64,17 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           MaterialPageRoute(builder: (context) => MainView()),
         );
       } else {
-        Fluttertoast.showToast(msg: 'Invalid login credentials');
+       await  Fluttertoast.showToast(msg: 'Invalid login credentials');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Invalid login credentials')),
+        );
         throw Exception('Invalid login credentials');
       }
     } catch (e) {
-      rethrow;
+      await Fluttertoast.showToast(msg: 'Login failed: ${e.toString()}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login failed: ${e.toString()}')),
+      );
     }
   }
 
