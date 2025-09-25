@@ -7,11 +7,13 @@ import 'CustomTextField.dart';
 class AddContactDialog extends StatefulWidget {
   final String purokId;
   final Function(String, ContactModel) onAddContact;
+  final Future<bool> Function(String name, String phone) onCheckDuplicate;
 
   const AddContactDialog({
     Key? key,
     required this.purokId,
     required this.onAddContact,
+    required this.onCheckDuplicate,
   }) : super(key: key);
 
   @override
@@ -21,15 +23,19 @@ class AddContactDialog extends StatefulWidget {
 class _AddContactDialogState extends State<AddContactDialog> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
-    _emailController.dispose();
     super.dispose();
+  }
+
+  bool _isValidPhilippinePhoneNumber(String phone) {
+    // Philippine phone numbers: +63 followed by 10 digits, or 09 followed by 9 digits
+    final RegExp phPhoneRegex = RegExp(r'^(?:\+63|0)9\d{9}$');
+    return phPhoneRegex.hasMatch(phone.replaceAll(' ', ''));
   }
 
   @override
@@ -64,18 +70,10 @@ class _AddContactDialogState extends State<AddContactDialog> {
               SizedBox(height: screenHeight * 0.02),
               CustomTextField(
                 controller: _phoneController,
-                hintText: 'Phone Number',
+                hintText: 'Phone Number (e.g., +639123456789)',
                 borderColor: ColorHelpers.primaryColor,
                 fillColor: ColorHelpers.secondaryColor.withOpacity(0.1),
                 keyboardType: TextInputType.phone,
-              ),
-              SizedBox(height: screenHeight * 0.02),
-              CustomTextField(
-                controller: _emailController,
-                hintText: 'Email Address',
-                borderColor: ColorHelpers.primaryColor,
-                fillColor: ColorHelpers.secondaryColor.withOpacity(0.1),
-                keyboardType: TextInputType.emailAddress,
               ),
             ],
           ),
@@ -94,18 +92,47 @@ class _AddContactDialogState extends State<AddContactDialog> {
           ),
         ),
         ElevatedButton(
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              final contact = ContactModel(
-                id: DateTime.now().millisecondsSinceEpoch.toString(),
-                name: _nameController.text.trim(),
-                phoneNumber: _phoneController.text.trim(),
-                email: _emailController.text.trim(),
-                purokNumber: widget.purokId,
+          onPressed: () async {
+            final name = _nameController.text.trim();
+            final phone = _phoneController.text.trim();
+
+            if (name.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Please enter a name')),
               );
-              widget.onAddContact(widget.purokId, contact);
-              Navigator.of(context).pop();
+              return;
             }
+
+            if (!_isValidPhilippinePhoneNumber(phone)) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Please enter a valid Philippine phone number'),
+                ),
+              );
+              return;
+            }
+
+            // Check for duplicates
+            final isDuplicate = await widget.onCheckDuplicate(name, phone);
+            if (isDuplicate) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Contact with this name and phone number already exists',
+                  ),
+                ),
+              );
+              return;
+            }
+
+            final contact = ContactModel(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              name: name,
+              phoneNumber: phone,
+              purokNumber: widget.purokId,
+            );
+            widget.onAddContact(widget.purokId, contact);
+            Navigator.of(context).pop();
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: ColorHelpers.primaryColor,

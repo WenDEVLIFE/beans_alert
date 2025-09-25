@@ -62,6 +62,16 @@ class DeletePurokEvent extends ContactEvent {
   List<Object> get props => [purokId];
 }
 
+class CheckDuplicateEvent extends ContactEvent {
+  final String name;
+  final String phoneNumber;
+
+  const CheckDuplicateEvent({required this.name, required this.phoneNumber});
+
+  @override
+  List<Object> get props => [name, phoneNumber];
+}
+
 abstract class ContactState extends Equatable {
   const ContactState();
 
@@ -101,6 +111,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> {
     on<UpdateContactEvent>(_onUpdateContact);
     on<DeleteContactEvent>(_onDeleteContact);
     on<DeletePurokEvent>(_onDeletePurok);
+    on<CheckDuplicateEvent>(_onCheckDuplicate);
   }
 
   Future<void> _onLoadContacts(
@@ -192,6 +203,21 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> {
     } catch (e) {
       Fluttertoast.showToast(msg: 'Error: ${e.toString()}');
       emit(ContactError('Failed to delete purok: ${e.toString()}'));
+    }
+  }
+
+  Future<void> _onCheckDuplicate(
+    CheckDuplicateEvent event,
+    Emitter<ContactState> emit,
+  ) async {
+    try {
+      final isDuplicate = await contactRepository.checkDuplicateContact(
+        event.name,
+        event.phoneNumber,
+      );
+      // This will be handled by the caller
+    } catch (e) {
+      emit(ContactError('Failed to check duplicate: ${e.toString()}'));
     }
   }
 }

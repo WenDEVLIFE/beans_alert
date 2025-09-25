@@ -62,6 +62,13 @@ class _ContactViewContentState extends State<_ContactViewContent> {
     );
   }
 
+  Future<bool> _checkDuplicate(String name, String phone) async {
+    return await context.read<ContactRepository>().checkDuplicateContact(
+      name,
+      phone,
+    );
+  }
+
   void _showAddPurokDialog() {
     showDialog(
       context: context,
@@ -72,8 +79,11 @@ class _ContactViewContentState extends State<_ContactViewContent> {
   void _showAddContactDialog(String purokId) {
     showDialog(
       context: context,
-      builder: (context) =>
-          AddContactDialog(purokId: purokId, onAddContact: _addContact),
+      builder: (context) => AddContactDialog(
+        purokId: purokId,
+        onAddContact: _addContact,
+        onCheckDuplicate: _checkDuplicate,
+      ),
     );
   }
 
@@ -92,7 +102,6 @@ class _ContactViewContentState extends State<_ContactViewContent> {
               _searchQuery.toLowerCase(),
             ) ||
             contact.phoneNumber.contains(_searchQuery) ||
-            contact.email.toLowerCase().contains(_searchQuery.toLowerCase()) ||
             purok.contains(_searchQuery);
       }).toList();
 

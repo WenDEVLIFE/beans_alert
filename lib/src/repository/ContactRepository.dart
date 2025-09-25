@@ -62,4 +62,24 @@ class ContactRepository {
     // Then delete the purok
     await _puroks.doc(purokId).delete();
   }
+
+  // Check if contact with same name and phone exists
+  Future<bool> checkDuplicateContact(String name, String phoneNumber) async {
+    // Check across all puroks
+    final purokSnapshot = await _puroks.get();
+    for (var purokDoc in purokSnapshot.docs) {
+      final contactsSnapshot = await _contacts(purokDoc.id).get();
+      for (var contactDoc in contactsSnapshot.docs) {
+        final contact = ContactModel.fromMap(
+          contactDoc.data() as Map<String, dynamic>,
+          contactDoc.id,
+        );
+        if (contact.name.toLowerCase() == name.toLowerCase() &&
+            contact.phoneNumber == phoneNumber) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
