@@ -1,152 +1,92 @@
 import 'package:beans_alert/src/helpers/SvgHelpers.dart';
 import 'package:beans_alert/src/widget/CustomNavigationSideBar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:uuid/uuid.dart';
 
+import '../bloc/ContactBloc.dart';
 import '../helpers/ColorHelpers.dart';
 import '../model/ContactModel.dart';
+import '../repository/ContactRepository.dart';
+import '../widget/AddContactDialog.dart';
+import '../widget/AddPurokDialog.dart';
 import '../widget/CustomSearchBar.dart';
 import '../widget/CustomText.dart';
 import '../widget/PurokContactCard.dart';
 
-class ContactView extends StatefulWidget {
+class ContactView extends StatelessWidget {
   const ContactView({Key? key}) : super(key: key);
 
   @override
-  State<ContactView> createState() => _ContactViewState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) =>
+          ContactBloc(contactRepository: ContactRepository())
+            ..add(LoadContactsEvent()),
+      child: const _ContactViewContent(),
+    );
+  }
 }
 
-class _ContactViewState extends State<ContactView> {
-  String _searchQuery = '';
-  late Map<String, List<ContactModel>> _purokContacts;
+class _ContactViewContent extends StatefulWidget {
+  const _ContactViewContent({Key? key}) : super(key: key);
 
   @override
-  void initState() {
-    super.initState();
-    _initializeDummyData();
-  }
+  State<_ContactViewContent> createState() => _ContactViewContentState();
+}
 
-  void _initializeDummyData() {
-    _purokContacts = {
-      '1': [
-        ContactModel(
-          id: '1',
-          name: 'Juan Dela Cruz',
-          phoneNumber: '+63 912 345 6789',
-          email: 'juan.delacruz@email.com',
-          purokNumber: '1',
-        ),
-        ContactModel(
-          id: '2',
-          name: 'Maria Santos',
-          phoneNumber: '+63 917 234 5678',
-          email: 'maria.santos@email.com',
-          purokNumber: '1',
-        ),
-        ContactModel(
-          id: '3',
-          name: 'Pedro Reyes',
-          phoneNumber: '+63 920 123 4567',
-          email: 'pedro.reyes@email.com',
-          purokNumber: '1',
-        ),
-      ],
-      '2': [
-        ContactModel(
-          id: '4',
-          name: 'Ana Garcia',
-          phoneNumber: '+63 918 765 4321',
-          email: 'ana.garcia@email.com',
-          purokNumber: '2',
-        ),
-        ContactModel(
-          id: '5',
-          name: 'Carlos Mendoza',
-          phoneNumber: '+63 915 876 5432',
-          email: 'carlos.mendoza@email.com',
-          purokNumber: '2',
-        ),
-      ],
-      '3': [
-        ContactModel(
-          id: '6',
-          name: 'Elena Rodriguez',
-          phoneNumber: '+63 919 987 6543',
-          email: 'elena.rodriguez@email.com',
-          purokNumber: '3',
-        ),
-        ContactModel(
-          id: '7',
-          name: 'Roberto Cruz',
-          phoneNumber: '+63 916 098 7654',
-          email: 'roberto.cruz@email.com',
-          purokNumber: '3',
-        ),
-        ContactModel(
-          id: '8',
-          name: 'Sofia Hernandez',
-          phoneNumber: '+63 921 109 8765',
-          email: 'sofia.hernandez@email.com',
-          purokNumber: '3',
-        ),
-        ContactModel(
-          id: '9',
-          name: 'Miguel Torres',
-          phoneNumber: '+63 922 210 9876',
-          email: 'miguel.torres@email.com',
-          purokNumber: '3',
-        ),
-      ],
-      '4': [], // Empty purok for demonstration
-      '5': [
-        ContactModel(
-          id: '10',
-          name: 'Isabella Martinez',
-          phoneNumber: '+63 923 321 0987',
-          email: 'isabella.martinez@email.com',
-          purokNumber: '5',
-        ),
-      ],
-    };
-  }
+class _ContactViewContentState extends State<_ContactViewContent> {
+  String _searchQuery = '';
 
-  void _removeContact(ContactModel contact) {
-    setState(() {
-      _purokContacts[contact.purokNumber]?.remove(contact);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${contact.name} removed from Purok ${contact.purokNumber}',
-        ),
-        backgroundColor: Colors.orange,
-        duration: const Duration(seconds: 2),
-      ),
+  void _removeContact(BuildContext context, ContactModel contact) {
+    context.read<ContactBloc>().add(
+      DeleteContactEvent(purokId: contact.purokNumber, contactId: contact.id),
     );
   }
 
-  void _deleteContact(ContactModel contact) {
-    setState(() {
-      _purokContacts[contact.purokNumber]?.remove(contact);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${contact.name} deleted permanently'),
-        backgroundColor: Colors.red,
-        duration: const Duration(seconds: 2),
-      ),
+  void _deleteContact(BuildContext context, ContactModel contact) {
+    context.read<ContactBloc>().add(
+      DeleteContactEvent(purokId: contact.purokNumber, contactId: contact.id),
     );
   }
 
-  Map<String, List<ContactModel>> get _filteredPurokContacts {
+  void _addPurok(String purokId) {
+    context.read<ContactBloc>().add(AddPurokEvent(purokId: purokId));
+  }
+
+  void _addContact(String purokId, ContactModel contact) {
+    context.read<ContactBloc>().add(
+      AddContactEvent(purokId: purokId, contact: contact),
+    );
+  }
+
+  void _showAddPurokDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AddPurokDialog(onAddPurok: _addPurok),
+    );
+  }
+
+  void _showAddContactDialog(String purokId) {
+    showDialog(
+      context: context,
+      builder: (context) =>
+          AddContactDialog(purokId: purokId, onAddContact: _addContact),
+    );
+  }
+
+  Map<String, List<ContactModel>> _getFilteredPurokContacts(
+    Map<String, List<ContactModel>> purokContacts,
+  ) {
     if (_searchQuery.isEmpty) {
-      return _purokContacts;
+      return purokContacts;
     }
 
     Map<String, List<ContactModel>> filtered = {};
 
-    _purokContacts.forEach((purok, contacts) {
+    purokContacts.forEach((purok, contacts) {
       List<ContactModel> filteredContacts = contacts.where((contact) {
         return contact.name.toLowerCase().contains(
               _searchQuery.toLowerCase(),
@@ -166,6 +106,29 @@ class _ContactViewState extends State<ContactView> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<ContactBloc, ContactState>(
+      builder: (context, state) {
+        if (state is ContactLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        } else if (state is ContactError) {
+          return Scaffold(body: Center(child: Text('Error: ${state.message}')));
+        } else if (state is ContactLoaded) {
+          final filteredContacts = _getFilteredPurokContacts(
+            state.purokContacts,
+          );
+          return _buildContent(context, filteredContacts);
+        }
+        return const Scaffold(body: Center(child: Text('No data')));
+      },
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    Map<String, List<ContactModel>> purokContacts,
+  ) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -211,6 +174,12 @@ class _ContactViewState extends State<ContactView> {
             ],
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const FaIcon(FontAwesomeIcons.plus),
+            onPressed: _showAddPurokDialog,
+          ),
+        ],
       ),
       drawer: CustomNavigationSideBar(),
       body: Column(
@@ -267,13 +236,13 @@ class _ContactViewState extends State<ContactView> {
               children: [
                 _buildStatItem(
                   'Total Puroks',
-                  _purokContacts.keys.length.toString(),
+                  purokContacts.keys.length.toString(),
                   FontAwesomeIcons.mapMarkerAlt,
                   ColorHelpers.accentColor,
                 ),
                 _buildStatItem(
                   'Total Contacts',
-                  _purokContacts.values
+                  purokContacts.values
                       .expand((contacts) => contacts)
                       .length
                       .toString(),
@@ -282,7 +251,7 @@ class _ContactViewState extends State<ContactView> {
                 ),
                 _buildStatItem(
                   'Active Puroks',
-                  _purokContacts.values
+                  purokContacts.values
                       .where((contacts) => contacts.isNotEmpty)
                       .length
                       .toString(),
@@ -295,7 +264,7 @@ class _ContactViewState extends State<ContactView> {
 
           // Purok Contact Cards
           Expanded(
-            child: _filteredPurokContacts.isEmpty
+            child: purokContacts.isEmpty
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -328,19 +297,17 @@ class _ContactViewState extends State<ContactView> {
                   )
                 : ListView.builder(
                     padding: EdgeInsets.only(bottom: screenHeight * 0.02),
-                    itemCount: _filteredPurokContacts.keys.length,
+                    itemCount: purokContacts.keys.length,
                     itemBuilder: (context, index) {
-                      final purokNumber = _filteredPurokContacts.keys.elementAt(
-                        index,
-                      );
-                      final contacts =
-                          _filteredPurokContacts[purokNumber] ?? [];
+                      final purokNumber = purokContacts.keys.elementAt(index);
+                      final contacts = purokContacts[purokNumber] ?? [];
 
                       return PurokContactCard(
                         purokNumber: purokNumber,
                         contacts: contacts,
                         onRemoveContact: _removeContact,
                         onDeleteContact: _deleteContact,
+                        onAddContact: _showAddContactDialog,
                       );
                     },
                   ),

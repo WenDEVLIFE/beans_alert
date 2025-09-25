@@ -7,8 +7,9 @@ import 'CustomText.dart';
 class PurokContactCard extends StatefulWidget {
   final String purokNumber;
   final List<ContactModel> contacts;
-  final Function(ContactModel) onRemoveContact;
-  final Function(ContactModel) onDeleteContact;
+  final Function(BuildContext, ContactModel) onRemoveContact;
+  final Function(BuildContext, ContactModel) onDeleteContact;
+  final Function(String)? onAddContact;
 
   const PurokContactCard({
     Key? key,
@@ -16,6 +17,7 @@ class PurokContactCard extends StatefulWidget {
     required this.contacts,
     required this.onRemoveContact,
     required this.onDeleteContact,
+    this.onAddContact,
   }) : super(key: key);
 
   @override
@@ -79,7 +81,7 @@ class _PurokContactCardState extends State<PurokContactCard>
             ),
             ElevatedButton(
               onPressed: () {
-                widget.onDeleteContact(contact);
+                widget.onDeleteContact(context, contact);
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
@@ -118,7 +120,7 @@ class _PurokContactCardState extends State<PurokContactCard>
             ),
             ElevatedButton(
               onPressed: () {
-                widget.onRemoveContact(contact);
+                widget.onRemoveContact(context, contact);
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
@@ -224,6 +226,28 @@ class _PurokContactCardState extends State<PurokContactCard>
                         ],
                       ),
                     ),
+
+                    // Add Contact Button
+                    if (widget.onAddContact != null)
+                      InkWell(
+                        onTap: () => widget.onAddContact!(widget.purokNumber),
+                        borderRadius: BorderRadius.circular(screenWidth * 0.02),
+                        child: Container(
+                          padding: EdgeInsets.all(screenWidth * 0.025),
+                          margin: EdgeInsets.only(right: screenWidth * 0.02),
+                          decoration: BoxDecoration(
+                            color: ColorHelpers.accentColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(
+                              screenWidth * 0.02,
+                            ),
+                          ),
+                          child: FaIcon(
+                            FontAwesomeIcons.userPlus,
+                            color: ColorHelpers.accentColor,
+                            size: screenWidth * 0.04,
+                          ),
+                        ),
+                      ),
 
                     // Expand/Collapse Icon
                     AnimatedRotation(
