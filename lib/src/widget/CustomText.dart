@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CustomText extends StatelessWidget {
-
   final String text;
   final String fontFamily;
   final double fontSize;
@@ -15,23 +14,21 @@ class CustomText extends StatelessWidget {
     required this.fontFamily,
     required this.fontSize,
     required this.color,
-    required this.fontWeight, required this.textAlign,
+    required this.fontWeight,
+    this.textAlign = TextAlign.left,
   });
 
   @override
   Widget build(BuildContext context) {
-
     return Text(
       text,
       style: TextStyle(
         fontFamily: fontFamily,
         fontSize: fontSize,
-        color:  color,
+        color: color,
         fontWeight: fontWeight,
       ),
       textAlign: textAlign,
     );
   }
-
-
 }

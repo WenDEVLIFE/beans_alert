@@ -1,18 +1,129 @@
 import 'package:beans_alert/src/helpers/SvgHelpers.dart';
+import 'package:beans_alert/src/model/ContactModel.dart';
+import 'package:beans_alert/src/services/SemaphoreService.dart';
+import 'package:beans_alert/src/widget/CustomButton.dart';
 import 'package:beans_alert/src/widget/CustomNavigationSideBar.dart';
+import 'package:beans_alert/src/widget/CustomText.dart';
+import 'package:beans_alert/src/widget/CustomTextField.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../bloc/ContactBloc.dart';
 import '../helpers/ColorHelpers.dart';
-import '../widget/CustomText.dart';
 
-class SendMessageView extends StatelessWidget {
+class SendMessageView extends StatefulWidget {
   const SendMessageView({Key? key}) : super(key: key);
+
+  @override
+  State<SendMessageView> createState() => _SendMessageViewState();
+}
+
+class _SendMessageViewState extends State<SendMessageView> {
+  final TextEditingController _senderNameController = TextEditingController(
+    text: 'Beans Alert',
+  );
+  final TextEditingController _messageController = TextEditingController();
+  final Set<ContactModel> _selectedContacts = {};
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ContactBloc>().add(LoadContactsEvent());
+  }
+
+  @override
+  void dispose() {
+    _senderNameController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  void _toggleContactSelection(ContactModel contact) {
+    setState(() {
+      if (_selectedContacts.contains(contact)) {
+        _selectedContacts.remove(contact);
+      } else {
+        _selectedContacts.add(contact);
+      }
+    });
+  }
+
+  void _sendMessage() async {
+    if (_selectedContacts.isEmpty) {
+      Fluttertoast.showToast(msg: 'Please select at least one recipient');
+      return;
+    }
+
+    if (_messageController.text.trim().isEmpty) {
+      Fluttertoast.showToast(msg: 'Please enter a message');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      int successCount = 0;
+      int failCount = 0;
+
+      for (final contact in _selectedContacts) {
+        final result = await SemaphoreService.sendSMS(
+          contact.phoneNumber,
+          _messageController.text.trim(),
+          senderName: _senderNameController.text.trim().isNotEmpty
+              ? _senderNameController.text.trim()
+              : null,
+        );
+
+        if (result) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      }
+
+      if (successCount > 0) {
+        Fluttertoast.showToast(
+          msg:
+              'Message sent to $successCount recipient${successCount > 1 ? 's' : ''}',
+          backgroundColor: Colors.green,
+        );
+      }
+
+      if (failCount > 0) {
+        Fluttertoast.showToast(
+          msg:
+              'Failed to send to $failCount recipient${failCount > 1 ? 's' : ''}',
+          backgroundColor: Colors.red,
+        );
+      }
+
+      // Clear message after sending
+      _messageController.clear();
+      setState(() => _selectedContacts.clear());
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: 'Error sending messages: $e',
+        backgroundColor: Colors.red,
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _scheduleMessage() {
+    // TODO: Implement scheduling functionality
+    Fluttertoast.showToast(msg: 'Schedule feature coming soon!');
+  }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: ColorHelpers.customblack1,
       appBar: AppBar(
@@ -58,14 +169,390 @@ class SendMessageView extends StatelessWidget {
         ),
       ),
       drawer: CustomNavigationSideBar(),
-      body: Center(
-        child: CustomText(
-          text: 'Send Message View',
-          fontFamily: 'Poppins',
-          fontSize: 24.0,
-          color: ColorHelpers.secondaryColor,
-          fontWeight: FontWeight.w600,
-          textAlign: TextAlign.center,
+      body: BlocBuilder<ContactBloc, ContactState>(
+        builder: (context, state) {
+          if (state is ContactLoading) {
+            return Center(
+              child: CircularProgressIndicator(color: ColorHelpers.accentColor),
+            );
+          }
+
+          if (state is ContactError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                    size: screenWidth * 0.15,
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+                  CustomText(
+                    text: 'Error loading contacts',
+                    fontFamily: 'Poppins',
+                    fontSize: screenWidth * 0.045,
+                    color: Colors.red,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  SizedBox(height: screenHeight * 0.01),
+                  CustomText(
+                    text: state.message,
+                    fontFamily: 'Poppins',
+                    fontSize: screenWidth * 0.035,
+                    color: ColorHelpers.secondaryColor.withOpacity(0.7),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ],
+              ),
+            );
+          }
+
+          if (state is ContactLoaded) {
+            final purokContacts = state.purokContacts;
+
+            return SingleChildScrollView(
+              padding: EdgeInsets.all(screenWidth * 0.04),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  CustomText(
+                    text: 'Send Message',
+                    fontFamily: 'Anton',
+                    fontSize: screenWidth * 0.06,
+                    color: ColorHelpers.secondaryColor,
+                    fontWeight: FontWeight.w600,
+                    textAlign: TextAlign.left,
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+
+                  // Recipients Section
+                  Container(
+                    padding: EdgeInsets.all(screenWidth * 0.04),
+                    decoration: BoxDecoration(
+                      color: ColorHelpers.primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                      border: Border.all(
+                        color: ColorHelpers.primaryColor.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CustomText(
+                              text: 'Select Recipients',
+                              fontFamily: 'Poppins',
+                              fontSize: screenWidth * 0.045,
+                              color: ColorHelpers.secondaryColor,
+                              fontWeight: FontWeight.w600,
+                              textAlign: TextAlign.left,
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: screenWidth * 0.03,
+                                vertical: screenHeight * 0.005,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorHelpers.accentColor,
+                                borderRadius: BorderRadius.circular(
+                                  screenWidth * 0.02,
+                                ),
+                              ),
+                              child: CustomText(
+                                text: '${_selectedContacts.length} selected',
+                                fontFamily: 'Poppins',
+                                fontSize: screenWidth * 0.035,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: screenHeight * 0.015),
+
+                        // Contact List by Purok
+                        if (purokContacts.isEmpty)
+                          Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(screenHeight * 0.04),
+                              child: CustomText(
+                                text: 'No contacts available',
+                                fontFamily: 'Poppins',
+                                fontSize: screenWidth * 0.04,
+                                color: ColorHelpers.secondaryColor.withOpacity(
+                                  0.6,
+                                ),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          )
+                        else
+                          ...purokContacts.entries.map((entry) {
+                            final purokName = entry.key;
+                            final contacts = entry.value;
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomText(
+                                  text: 'Purok $purokName',
+                                  fontFamily: 'Poppins',
+                                  fontSize: screenWidth * 0.04,
+                                  color: ColorHelpers.accentColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                SizedBox(height: screenHeight * 0.01),
+                                ...contacts.map(
+                                  (contact) => _buildContactItem(
+                                    contact,
+                                    screenWidth,
+                                    screenHeight,
+                                  ),
+                                ),
+                                SizedBox(height: screenHeight * 0.02),
+                              ],
+                            );
+                          }),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: screenHeight * 0.03),
+
+                  // Sender Name Field
+                  CustomText(
+                    text: 'Sender Name',
+                    fontFamily: 'Poppins',
+                    fontSize: screenWidth * 0.04,
+                    color: ColorHelpers.secondaryColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  SizedBox(height: screenHeight * 0.01),
+                  CustomTextField(
+                    controller: _senderNameController,
+                    hintText: 'Enter sender name',
+                    borderColor: ColorHelpers.primaryColor,
+                    fillColor: ColorHelpers.customblack1,
+                    prefixIcon: FontAwesomeIcons.user,
+                    iconColor: ColorHelpers.accentColor,
+                  ),
+
+                  SizedBox(height: screenHeight * 0.02),
+
+                  // Message Field
+                  CustomText(
+                    text: 'Message',
+                    fontFamily: 'Poppins',
+                    fontSize: screenWidth * 0.04,
+                    color: ColorHelpers.secondaryColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  SizedBox(height: screenHeight * 0.01),
+                  Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: screenWidth * 0.005,
+                          blurRadius: screenWidth * 0.01,
+                          offset: Offset(
+                            screenWidth * 0.005,
+                            screenHeight * 0.0025,
+                          ),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                    ),
+                    child: TextField(
+                      controller: _messageController,
+                      maxLines: 5,
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        color: ColorHelpers.secondaryColor,
+                        fontSize: screenWidth * 0.04,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Enter your message...',
+                        filled: true,
+                        hintStyle: TextStyle(
+                          fontFamily: 'Poppins',
+                          color: ColorHelpers.secondaryColor.withOpacity(0.6),
+                          fontSize: screenWidth * 0.04,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        fillColor: ColorHelpers.customblack1,
+                        contentPadding: EdgeInsets.all(screenWidth * 0.04),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            screenWidth * 0.03,
+                          ),
+                          borderSide: BorderSide(
+                            color: ColorHelpers.primaryColor,
+                            width: screenWidth * 0.0075,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            screenWidth * 0.03,
+                          ),
+                          borderSide: BorderSide(
+                            color: ColorHelpers.primaryColor,
+                            width: screenWidth * 0.005,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: screenHeight * 0.04),
+
+                  // Action Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomButton(
+                          hintText: _isLoading ? 'Sending...' : 'Send Now',
+                          fontFamily: 'Anton',
+                          fontSize: screenWidth * 0.045,
+                          fontWeight: FontWeight.w600,
+                          onPressed: _isLoading ? () {} : () => _sendMessage(),
+                          width: double.infinity,
+                          height: screenHeight * 0.06,
+                        ),
+                      ),
+                      SizedBox(width: screenWidth * 0.04),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _scheduleMessage,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorHelpers.secondaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              vertical: screenHeight * 0.015,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.calendar,
+                                color: ColorHelpers.primaryColor,
+                                size: screenWidth * 0.045,
+                              ),
+                              SizedBox(width: screenWidth * 0.02),
+                              CustomText(
+                                text: 'Schedule',
+                                fontFamily: 'Anton',
+                                fontSize: screenWidth * 0.04,
+                                color: ColorHelpers.primaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return Center(
+            child: CustomText(
+              text: 'No contacts loaded',
+              fontFamily: 'Poppins',
+              fontSize: screenWidth * 0.045,
+              color: ColorHelpers.secondaryColor.withOpacity(0.6),
+              fontWeight: FontWeight.w400,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildContactItem(
+    ContactModel contact,
+    double screenWidth,
+    double screenHeight,
+  ) {
+    final isSelected = _selectedContacts.contains(contact);
+
+    return GestureDetector(
+      onTap: () => _toggleContactSelection(contact),
+      child: Container(
+        margin: EdgeInsets.only(bottom: screenHeight * 0.01),
+        padding: EdgeInsets.all(screenWidth * 0.03),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? ColorHelpers.accentColor.withOpacity(0.2)
+              : ColorHelpers.customblack1,
+          borderRadius: BorderRadius.circular(screenWidth * 0.02),
+          border: Border.all(
+            color: isSelected
+                ? ColorHelpers.accentColor
+                : ColorHelpers.primaryColor.withOpacity(0.3),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: screenWidth * 0.06,
+              height: screenWidth * 0.06,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected
+                    ? ColorHelpers.accentColor
+                    : Colors.transparent,
+                border: Border.all(
+                  color: isSelected
+                      ? ColorHelpers.accentColor
+                      : ColorHelpers.secondaryColor.withOpacity(0.5),
+                  width: 2,
+                ),
+              ),
+              child: isSelected
+                  ? FaIcon(
+                      FontAwesomeIcons.check,
+                      color: Colors.white,
+                      size: screenWidth * 0.055,
+                    )
+                  : null,
+            ),
+            SizedBox(width: screenWidth * 0.03),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    text: contact.name,
+                    fontFamily: 'Poppins',
+                    fontSize: screenWidth * 0.04,
+                    color: ColorHelpers.secondaryColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  CustomText(
+                    text: contact.phoneNumber,
+                    fontFamily: 'Poppins',
+                    fontSize: screenWidth * 0.035,
+                    color: ColorHelpers.secondaryColor.withOpacity(0.7),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

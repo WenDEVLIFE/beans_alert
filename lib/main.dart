@@ -1,5 +1,7 @@
+import 'package:beans_alert/src/bloc/ContactBloc.dart';
 import 'package:beans_alert/src/bloc/LoginBloc.dart';
 import 'package:beans_alert/src/bloc/UserBloc.dart';
+import 'package:beans_alert/src/repository/ContactRepository.dart';
 import 'package:beans_alert/src/services/FirebaseService.dart';
 import 'package:beans_alert/src/view/SplashView.dart';
 import 'package:flutter/material.dart';
@@ -19,22 +21,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<LoginBloc>(
-          create: (context) => LoginBloc()
-        ),
-        BlocProvider<UserBloc>(
-            create: (context) => UserBloc()
+        BlocProvider<LoginBloc>(create: (context) => LoginBloc()),
+        BlocProvider<UserBloc>(create: (context) => UserBloc()),
+        BlocProvider<ContactBloc>(
+          create: (context) =>
+              ContactBloc(contactRepository: ContactRepository()),
         ),
       ],
-      child:  MaterialApp(
+      child: MaterialApp(
         title: 'E-Diary Cakes',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-
-        ),
+        theme: ThemeData(primarySwatch: Colors.blue),
         home: const SplashView(),
-    )
+      ),
     );
   }
 }
