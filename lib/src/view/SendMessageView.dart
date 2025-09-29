@@ -13,6 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../bloc/ContactBloc.dart';
 import '../helpers/ColorHelpers.dart';
+import '../widget/SelectableContactCard.dart';
 
 class SendMessageView extends StatefulWidget {
   const SendMessageView({Key? key}) : super(key: key);
@@ -309,10 +310,13 @@ class _SendMessageViewState extends State<SendMessageView> {
                                 ),
                                 SizedBox(height: screenHeight * 0.01),
                                 ...contacts.map(
-                                  (contact) => _buildContactItem(
-                                    contact,
-                                    screenWidth,
-                                    screenHeight,
+                                  (contact) => SelectableContactCard(
+                                    contact: contact,
+                                    isSelected: _selectedContacts.contains(
+                                      contact,
+                                    ),
+                                    onTap: () =>
+                                        _toggleContactSelection(contact),
                                   ),
                                 ),
                                 SizedBox(height: screenHeight * 0.02),
@@ -477,83 +481,6 @@ class _SendMessageViewState extends State<SendMessageView> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildContactItem(
-    ContactModel contact,
-    double screenWidth,
-    double screenHeight,
-  ) {
-    final isSelected = _selectedContacts.contains(contact);
-
-    return GestureDetector(
-      onTap: () => _toggleContactSelection(contact),
-      child: Container(
-        margin: EdgeInsets.only(bottom: screenHeight * 0.01),
-        padding: EdgeInsets.all(screenWidth * 0.03),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? ColorHelpers.accentColor.withOpacity(0.2)
-              : ColorHelpers.customblack1,
-          borderRadius: BorderRadius.circular(screenWidth * 0.02),
-          border: Border.all(
-            color: isSelected
-                ? ColorHelpers.accentColor
-                : ColorHelpers.primaryColor.withOpacity(0.3),
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: screenWidth * 0.06,
-              height: screenWidth * 0.06,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected
-                    ? ColorHelpers.accentColor
-                    : Colors.transparent,
-                border: Border.all(
-                  color: isSelected
-                      ? ColorHelpers.accentColor
-                      : ColorHelpers.secondaryColor.withOpacity(0.5),
-                  width: 2,
-                ),
-              ),
-              child: isSelected
-                  ? FaIcon(
-                      FontAwesomeIcons.check,
-                      color: Colors.white,
-                      size: screenWidth * 0.055,
-                    )
-                  : null,
-            ),
-            SizedBox(width: screenWidth * 0.03),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomText(
-                    text: contact.name,
-                    fontFamily: 'Poppins',
-                    fontSize: screenWidth * 0.04,
-                    color: ColorHelpers.secondaryColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  CustomText(
-                    text: contact.phoneNumber,
-                    fontFamily: 'Poppins',
-                    fontSize: screenWidth * 0.035,
-                    color: ColorHelpers.secondaryColor.withOpacity(0.7),
-                    fontWeight: FontWeight.w400,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
