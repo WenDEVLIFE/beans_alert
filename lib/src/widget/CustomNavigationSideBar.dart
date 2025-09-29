@@ -117,7 +117,7 @@ class _CustomNavigationSideBarState extends State<CustomNavigationSideBar> {
                     // Navigate to Calendar
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => CalendarView()),
+                      MaterialPageRoute(builder: (context) => ScheduleView()),
                     );
                   } else if (index == 5) {
                     final mainContext = context; // Save the main screen context

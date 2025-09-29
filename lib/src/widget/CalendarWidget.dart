@@ -9,7 +9,9 @@ import 'CustomText.dart';
 
 class Calendar extends StatefulWidget {
   final Function(DateTime)? onDateSelected;
-  const Calendar({Key? key, this.onDateSelected}) : super(key: key);
+  final List<DateTime>? highlightedDates;
+  const Calendar({Key? key, this.onDateSelected, this.highlightedDates})
+    : super(key: key);
 
   @override
   State<Calendar> createState() => _CalendarState();
@@ -18,12 +20,6 @@ class Calendar extends StatefulWidget {
 class _CalendarState extends State<Calendar> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-
-  final List<DateTime> notAvailableDates = [
-    DateTime.now().add(Duration(days: 2)),
-    DateTime.now().add(Duration(days: 5)),
-    DateTime.now().add(Duration(days: 8)),
-  ];
 
   List<DateTime> _daysInMonth(DateTime month) {
     // final firstDay = DateTime(month.year, month.month, 1);
@@ -136,31 +132,37 @@ class _CalendarState extends State<Calendar> {
                     day.year == _selectedDay!.year &&
                     day.month == _selectedDay!.month &&
                     day.day == _selectedDay!.day;
-                final isNotAvailable = notAvailableDates.any(
-                  (d) =>
-                      d.year == day.year &&
-                      d.month == day.month &&
-                      d.day == day.day,
-                );
+                final isHighlighted =
+                    widget.highlightedDates?.any(
+                      (d) =>
+                          d.year == day.year &&
+                          d.month == day.month &&
+                          d.day == day.day,
+                    ) ??
+                    false;
                 return GestureDetector(
                   onTap: () {
-                    if (!isNotAvailable) {
-                      setState(() {
-                        _selectedDay = day;
-                      });
-                      if (widget.onDateSelected != null) {
-                        widget.onDateSelected!(day);
-                      }
+                    setState(() {
+                      _selectedDay = day;
+                    });
+                    if (widget.onDateSelected != null) {
+                      widget.onDateSelected!(day);
                     }
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isNotAvailable
-                          ? Colors.grey
+                      color: isHighlighted
+                          ? ColorHelpers.accentColor.withOpacity(0.3)
                           : isSelected
-                          ? Colors.transparent
+                          ? ColorHelpers.secondaryColor.withOpacity(0.2)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(30),
+                      border: isSelected
+                          ? Border.all(
+                              color: ColorHelpers.accentColor,
+                              width: 2,
+                            )
+                          : null,
                     ),
                     child: Center(
                       child: CustomText(
