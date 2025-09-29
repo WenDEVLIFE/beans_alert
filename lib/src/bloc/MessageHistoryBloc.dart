@@ -1,8 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 import '../model/MessageHistory.dart';
 import '../repository/MessageHistoryRepository.dart';
+import '../services/SemaphoreService.dart';
 
 abstract class MessageHistoryEvent extends Equatable {
   const MessageHistoryEvent();
@@ -38,6 +41,15 @@ class SearchMessageHistoryEvent extends MessageHistoryEvent {
 
   @override
   List<Object> get props => [query];
+}
+
+class ResendMessageEvent extends MessageHistoryEvent {
+  final MessageHistory messageHistory;
+
+  const ResendMessageEvent({required this.messageHistory});
+
+  @override
+  List<Object> get props => [messageHistory];
 }
 
 abstract class MessageHistoryState extends Equatable {
@@ -80,6 +92,7 @@ class MessageHistoryBloc
     on<AddMessageHistoryEvent>(_onAddMessageHistory);
     on<DeleteMessageHistoryEvent>(_onDeleteMessageHistory);
     on<SearchMessageHistoryEvent>(_onSearchMessageHistory);
+    on<ResendMessageEvent>(_onResendMessage);
   }
 
   Future<void> _onLoadMessageHistory(
@@ -162,6 +175,50 @@ class MessageHistoryBloc
           'Failed to search message history: ${e.toString()}',
         ),
       );
+    }
+  }
+
+  Future<void> _onResendMessage(
+    ResendMessageEvent event,
+    Emitter<MessageHistoryState> emit,
+  ) async {
+    try {
+      // Attempt to resend the SMS
+      final result = await SemaphoreService.sendSMS(
+        event.messageHistory.receiverPhone,
+        event.messageHistory.message,
+        senderName: event.messageHistory.senderName.isNotEmpty
+            ? event.messageHistory.senderName
+            : null,
+      );
+
+      if (result) {
+        // Update the message history with success status and new timestamp
+        final updatedMessage = event.messageHistory.copyWith(
+          sentSuccessfully: true,
+          timestamp: DateTime.now(),
+        );
+
+        await messageHistoryRepository.addMessageHistory(updatedMessage);
+        Fluttertoast.showToast(
+          msg: 'Message resent successfully',
+          backgroundColor: Colors.green,
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: 'Failed to resend message',
+          backgroundColor: Colors.red,
+        );
+      }
+
+      // Reload message history to reflect changes
+      add(LoadMessageHistoryEvent());
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: 'Error resending message: $e',
+        backgroundColor: Colors.red,
+      );
+      emit(MessageHistoryError('Failed to resend message: ${e.toString()}'));
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:beans_alert/src/model/ContactModel.dart';
 import 'package:beans_alert/src/widget/CustomText.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../helpers/ColorHelpers.dart';
 
@@ -56,10 +57,10 @@ class SelectableContactCard extends StatelessWidget {
                 ),
               ),
               child: isSelected
-                  ? Icon(
-                      Icons.check,
+                  ? FaIcon(
+                      FontAwesomeIcons.check,
                       color: Colors.white,
-                      size: screenWidth * 0.04,
+                      size: screenWidth * 0.045,
                     )
                   : null,
             ),

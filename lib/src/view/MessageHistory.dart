@@ -3,6 +3,7 @@ import 'package:beans_alert/src/widget/CustomNavigationSideBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../bloc/MessageHistoryBloc.dart';
@@ -140,12 +141,12 @@ class _MessageHistoryState extends State<MessageHistory> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.message_outlined,
+                              FaIcon(
+                                FontAwesomeIcons.solidMessage,
                                 color: ColorHelpers.secondaryColor.withOpacity(
-                                  0.5,
+                                  0.3,
                                 ),
-                                size: screenWidth * 0.15,
+                                size: screenWidth * 0.2,
                               ),
                               SizedBox(height: screenHeight * 0.02),
                               CustomText(
@@ -187,6 +188,58 @@ class _MessageHistoryState extends State<MessageHistory> {
           );
         },
       ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context, message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: ColorHelpers.customblack1,
+          title: CustomText(
+            text: 'Delete Message',
+            fontFamily: 'Anton',
+            fontSize: 18,
+            color: ColorHelpers.secondaryColor,
+            fontWeight: FontWeight.w600,
+          ),
+          content: CustomText(
+            text: 'Are you sure you want to delete this message?',
+            fontFamily: 'Poppins',
+            fontSize: 14,
+            color: ColorHelpers.secondaryColor.withOpacity(0.8),
+            fontWeight: FontWeight.w400,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: CustomText(
+                text: 'Cancel',
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                color: ColorHelpers.secondaryColor.withOpacity(0.6),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                context.read<MessageHistoryBloc>().add(
+                  DeleteMessageHistoryEvent(messageId: message.id),
+                );
+                Navigator.of(context).pop();
+              },
+              child: CustomText(
+                text: 'Delete',
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                color: Colors.red,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -270,23 +323,85 @@ class _MessageHistoryState extends State<MessageHistory> {
           ),
           SizedBox(height: screenHeight * 0.01),
 
-          // Footer with sender and timestamp
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // Footer with sender, timestamp, and action buttons
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomText(
-                text: 'From: ${message.senderName}',
-                fontFamily: 'Poppins',
-                fontSize: screenWidth * 0.03,
-                color: ColorHelpers.secondaryColor.withOpacity(0.6),
-                fontWeight: FontWeight.w400,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomText(
+                    text: 'From: ${message.senderName}',
+                    fontFamily: 'Poppins',
+                    fontSize: screenWidth * 0.03,
+                    color: ColorHelpers.secondaryColor.withOpacity(0.6),
+                    fontWeight: FontWeight.w400,
+                  ),
+                  CustomText(
+                    text: timeFormat.format(message.timestamp),
+                    fontFamily: 'Poppins',
+                    fontSize: screenWidth * 0.03,
+                    color: ColorHelpers.secondaryColor.withOpacity(0.6),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ],
               ),
-              CustomText(
-                text: timeFormat.format(message.timestamp),
-                fontFamily: 'Poppins',
-                fontSize: screenWidth * 0.03,
-                color: ColorHelpers.secondaryColor.withOpacity(0.6),
-                fontWeight: FontWeight.w400,
+              SizedBox(height: screenHeight * 0.01),
+              // Action buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (!message.sentSuccessfully)
+                    TextButton.icon(
+                      onPressed: () {
+                        context.read<MessageHistoryBloc>().add(
+                          ResendMessageEvent(messageHistory: message),
+                        );
+                      },
+                      icon: FaIcon(
+                        FontAwesomeIcons.paperPlane,
+                        color: ColorHelpers.accentColor,
+                        size: screenWidth * 0.04,
+                      ),
+                      label: CustomText(
+                        text: 'Resend',
+                        fontFamily: 'Poppins',
+                        fontSize: screenWidth * 0.035,
+                        color: ColorHelpers.accentColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.02,
+                          vertical: screenHeight * 0.005,
+                        ),
+                      ),
+                    ),
+                  SizedBox(width: screenWidth * 0.02),
+                  TextButton.icon(
+                    onPressed: () {
+                      _showDeleteConfirmation(context, message);
+                    },
+                    icon: FaIcon(
+                      FontAwesomeIcons.trash,
+                      color: Colors.red,
+                      size: screenWidth * 0.04,
+                    ),
+                    label: CustomText(
+                      text: 'Delete',
+                      fontFamily: 'Poppins',
+                      fontSize: screenWidth * 0.035,
+                      color: Colors.red,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth * 0.02,
+                        vertical: screenHeight * 0.005,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
