@@ -1,7 +1,9 @@
 import 'package:beans_alert/src/bloc/ContactBloc.dart';
 import 'package:beans_alert/src/bloc/LoginBloc.dart';
+import 'package:beans_alert/src/bloc/MessageHistoryBloc.dart';
 import 'package:beans_alert/src/bloc/UserBloc.dart';
 import 'package:beans_alert/src/repository/ContactRepository.dart';
+import 'package:beans_alert/src/repository/MessageHistoryRepository.dart';
 import 'package:beans_alert/src/services/FirebaseService.dart';
 import 'package:beans_alert/src/view/SplashView.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,11 @@ class MyApp extends StatelessWidget {
         BlocProvider<ContactBloc>(
           create: (context) =>
               ContactBloc(contactRepository: ContactRepository()),
+        ),
+        BlocProvider<MessageHistoryBloc>(
+          create: (context) => MessageHistoryBloc(
+            messageHistoryRepository: MessageHistoryRepository(),
+          ),
         ),
       ],
       child: MaterialApp(

@@ -20,16 +20,19 @@ void main() {
           request.bodyFields!['apikey'],
           '86d38d84b21ecbc9d9f7b35fd2c59b09',
         );
-        expect(request.bodyFields!['number'], '09123456789');
-        expect(request.bodyFields!['message'], 'Test message');
+        expect(request.bodyFields!['number'], '09497811258');
+        expect(request.bodyFields!['message'], 'Test message from semaphore');
         expect(request.bodyFields!['sendername'], 'TestSender');
 
-        return http.Response('{"status": "success"}', 200);
+        return http.Response(
+          '[{"message_id":123,"status":"Pending","recipient":"09497811258"}]',
+          200,
+        );
       });
 
       final result = await SemaphoreService.sendSMS(
-        '09123456789',
-        'Test message',
+        '09497811258',
+        'Test message from semaphore',
         senderName: 'TestSender',
         client: mockClient,
       );
@@ -39,12 +42,15 @@ void main() {
 
     test('sendSMS returns true on queued response', () async {
       final mockClient = MockClient((request) async {
-        return http.Response('{"status": "queued"}', 200);
+        return http.Response(
+          '[{"message_id":124,"status":"Pending","recipient":"09497811258"}]',
+          200,
+        );
       });
 
       final result = await SemaphoreService.sendSMS(
-        '09123456789',
-        'Test message',
+        '09497811258',
+        'Test message from semaphore',
         client: mockClient,
       );
 
@@ -60,8 +66,8 @@ void main() {
       });
 
       final result = await SemaphoreService.sendSMS(
-        '09123456789',
-        'Test message',
+        '09497811258',
+        'Test message from semaphore',
         client: mockClient,
       );
 
@@ -74,8 +80,8 @@ void main() {
       });
 
       final result = await SemaphoreService.sendSMS(
-        '09123456789',
-        'Test message',
+        '09497811258',
+        'Test message from semaphore',
         client: mockClient,
       );
 
@@ -88,8 +94,8 @@ void main() {
       });
 
       final result = await SemaphoreService.sendSMS(
-        '09123456789',
-        'Test message',
+        '09497811258',
+        'Test message from semaphore',
         client: mockClient,
       );
 
@@ -103,8 +109,8 @@ void main() {
       });
 
       final result = await SemaphoreService.sendSMS(
-        '09123456789',
-        'Test message',
+        '09497811258',
+        'Test message from semaphore',
         client: mockClient,
       );
 
