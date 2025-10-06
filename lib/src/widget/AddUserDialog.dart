@@ -202,7 +202,7 @@ class _AddUserDialogState extends State<AddUserDialog>
                                     return 'Enter email address';
                                   }
                                   if (!RegExp(
-                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}\$',
+                                    r'^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}$',
                                   ).hasMatch(value)) {
                                     return 'Enter a valid email';
                                   }
