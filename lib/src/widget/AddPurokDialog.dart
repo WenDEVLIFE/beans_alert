@@ -28,6 +28,7 @@ class _AddPurokDialogState extends State<AddPurokDialog> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return AlertDialog(
+      backgroundColor: ColorHelpers.customblack1,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(screenWidth * 0.05),
       ),
