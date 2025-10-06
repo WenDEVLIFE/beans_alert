@@ -195,7 +195,7 @@ class _PurokContactCardState extends State<PurokContactCard>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomText(
-                            text: 'Purok ${widget.purokNumber}',
+                            text: '${widget.purokNumber}',
                             fontFamily: 'Poppins',
                             fontSize: screenWidth * 0.05,
                             color: ColorHelpers.secondaryColor,
