@@ -220,4 +220,8 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> {
       emit(ContactError('Failed to check duplicate: ${e.toString()}'));
     }
   }
+
+  Future<bool> checkDuplicate(String name, String phoneNumber) async {
+    return await contactRepository.checkDuplicateContact(name, phoneNumber);
+  }
 }

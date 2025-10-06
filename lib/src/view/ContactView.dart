@@ -9,7 +9,6 @@ import 'package:uuid/uuid.dart';
 import '../bloc/ContactBloc.dart';
 import '../helpers/ColorHelpers.dart';
 import '../model/ContactModel.dart';
-import '../repository/ContactRepository.dart';
 import '../widget/AddContactDialog.dart';
 import '../widget/AddPurokDialog.dart';
 import '../widget/CustomSearchBar.dart';
@@ -21,12 +20,7 @@ class ContactView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          ContactBloc(contactRepository: ContactRepository())
-            ..add(LoadContactsEvent()),
-      child: const _ContactViewContent(),
-    );
+    return const _ContactViewContent();
   }
 }
 
@@ -39,6 +33,12 @@ class _ContactViewContent extends StatefulWidget {
 
 class _ContactViewContentState extends State<_ContactViewContent> {
   String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ContactBloc>().add(LoadContactsEvent());
+  }
 
   void _removeContact(BuildContext context, ContactModel contact) {
     context.read<ContactBloc>().add(
@@ -63,10 +63,7 @@ class _ContactViewContentState extends State<_ContactViewContent> {
   }
 
   Future<bool> _checkDuplicate(String name, String phone) async {
-    return await context.read<ContactRepository>().checkDuplicateContact(
-      name,
-      phone,
-    );
+    return await context.read<ContactBloc>().checkDuplicate(name, phone);
   }
 
   void _showAddPurokDialog() {
