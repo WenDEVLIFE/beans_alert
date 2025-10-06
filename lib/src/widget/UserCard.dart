@@ -4,21 +4,13 @@ import 'package:beans_alert/src/bloc/UserBloc.dart';
 import 'package:beans_alert/src/helpers/ColorHelpers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutter/material.dart';
 
 class UserCard extends StatefulWidget {
   final UserModel user;
   final UserBloc userBloc;
-  final VoidCallback? onUserUpdated;
-  final VoidCallback? onUserDeleted;
 
-  const UserCard({
-    Key? key,
-    required this.user,
-    required this.userBloc,
-    this.onUserUpdated,
-    this.onUserDeleted,
-  }) : super(key: key);
+  const UserCard({Key? key, required this.user, required this.userBloc})
+    : super(key: key);
 
   @override
   State<UserCard> createState() => _UserCardState();
@@ -91,6 +83,7 @@ class _UserCardState extends State<UserCard>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: ColorHelpers.customblack1,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -167,7 +160,7 @@ class _UserCardState extends State<UserCard>
                       ),
                     ),
                   ),
-                  items: ['Admin', 'Manager', 'User'].map((String role) {
+                  items: ['Admin', 'Staff'].map((String role) {
                     return DropdownMenuItem<String>(
                       value: role,
                       child: Text(role),
@@ -269,12 +262,10 @@ class _UserCardState extends State<UserCard>
 
   void _updateUser(String fullname, String email, String role) {
     widget.userBloc.updateUser(widget.user.id, fullname, email, role);
-    widget.onUserUpdated?.call();
   }
 
   void _deleteUser() {
     widget.userBloc.deleteUser(widget.user.id);
-    widget.onUserDeleted?.call();
   }
 
   @override
@@ -347,11 +338,13 @@ class _UserCardState extends State<UserCard>
                                   ),
                                 ],
                               ),
-                              child: FaIcon(
-                                _getRoleIcon(),
-                                color: Colors.white,
-                                size: 30,
-                              ),
+                              child: Center(
+                                child: FaIcon(
+                                  _getRoleIcon(),
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              )
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -459,6 +452,7 @@ class _UserCardState extends State<UserCard>
           onTap: onPressed,
           borderRadius: BorderRadius.circular(8),
           child: Container(
+            alignment: Alignment.center,
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: onPressed != null
