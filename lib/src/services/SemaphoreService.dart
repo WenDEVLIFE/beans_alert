@@ -12,7 +12,6 @@ class SemaphoreService {
     String? senderName,
     http.Client? client,
   }) async {
-    senderName ="Semaphore";
     final Map<String, String> body = {
       'apikey': _apiKey,
       'number': phoneNumber,
