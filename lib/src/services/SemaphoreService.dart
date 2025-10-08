@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class SemaphoreService {
-  static const String _baseUrl = 'https://api.semaphore.co/api/v4/messages';
+  static const String _baseUrl = 'https://api.semaphore.co/api/v4/priority';
   // Replace with your actual Semaphore API key
   static const String _apiKey = '86d38d84b21ecbc9d9f7b35fd2c59b09';
 
