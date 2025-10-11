@@ -330,12 +330,26 @@ class _MessageHistoryState extends State<MessageHistory> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomText(
-                    text: 'From: ${message.senderName}',
-                    fontFamily: 'Poppins',
-                    fontSize: screenWidth * 0.03,
-                    color: ColorHelpers.secondaryColor.withOpacity(0.6),
-                    fontWeight: FontWeight.w400,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          text: 'From: ${message.senderName}',
+                          fontFamily: 'Poppins',
+                          fontSize: screenWidth * 0.03,
+                          color: ColorHelpers.secondaryColor.withOpacity(0.6),
+                          fontWeight: FontWeight.w400,
+                        ),
+                        CustomText(
+                          text: 'Service: ${message.serviceType}',
+                          fontFamily: 'Poppins',
+                          fontSize: screenWidth * 0.03,
+                          color: ColorHelpers.secondaryColor.withOpacity(0.6),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ],
+                    ),
                   ),
                   CustomText(
                     text: timeFormat.format(message.timestamp),

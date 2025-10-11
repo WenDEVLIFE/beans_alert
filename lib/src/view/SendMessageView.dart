@@ -15,8 +15,10 @@ import '../bloc/ContactBloc.dart';
 import '../bloc/MessageHistoryBloc.dart';
 import '../bloc/ScheduledMessageBloc.dart';
 import '../helpers/ColorHelpers.dart';
+import '../helpers/SessionHelpers.dart';
 import '../model/MessageHistory.dart';
 import '../model/ScheduledMessage.dart';
+import '../services/GmailService.dart';
 import '../widget/SelectableContactCard.dart';
 
 class SendMessageView extends StatefulWidget {
@@ -31,6 +33,8 @@ class _SendMessageViewState extends State<SendMessageView> {
   final TextEditingController _messageController = TextEditingController();
   final Set<ContactModel> _selectedContacts = {};
   bool _isLoading = false;
+  bool _sendSMS = true;
+  bool _sendEmail = true;
 
   @override
   void initState() {
@@ -79,19 +83,46 @@ class _SendMessageViewState extends State<SendMessageView> {
     setState(() => _isLoading = true);
 
     try {
-      int successCount = 0;
-      int failCount = 0;
+      int smsSuccessCount = 0;
+      int smsFailCount = 0;
+      int emailSuccessCount = 0;
+      int emailFailCount = 0;
 
       print('📤 Sending to ${_selectedContacts.length} contacts...');
       for (final contact in _selectedContacts) {
-        print('📞 Sending to: ${contact.name} (${contact.phoneNumber})');
-        final result = await SemaphoreService.sendSMS(
-          contact.phoneNumber,
-          _messageController.text.trim(),
-          senderName: _senderNameController.text.trim().isNotEmpty
-              ? _senderNameController.text.trim()
-              : null,
-        );
+        print('📞 Sending to: ${contact.name} (${contact.phoneNumber}, ${contact.email})');
+
+        // Send SMS if phone number exists and SMS is selected
+        bool smsResult = false;
+        if (_sendSMS && contact.phoneNumber.isNotEmpty) {
+          smsResult = await SemaphoreService.sendSMS(
+            contact.phoneNumber,
+            _messageController.text.trim(),
+            senderName: _senderNameController.text.trim().isNotEmpty
+                ? _senderNameController.text.trim()
+                : null,
+          );
+        }
+
+        // Send Email if email exists and Email is selected
+        bool emailResult = false;
+        if (_sendEmail && contact.email.isNotEmpty) {
+          emailResult = await GmailService.sendedToClient(
+            [contact.email],
+            'Message from ${_senderNameController.text.trim().isNotEmpty ? _senderNameController.text.trim() : 'Beans Alert'}',
+            _messageController.text.trim(),
+          );
+        }
+
+        // Determine service type
+        String serviceType = 'None';
+        if (smsResult && emailResult) {
+          serviceType = 'Both';
+        } else if (smsResult) {
+          serviceType = 'SMS';
+        } else if (emailResult) {
+          serviceType = 'Email';
+        }
 
         // Save message history regardless of success/failure
         final messageHistory = MessageHistory(
@@ -102,33 +133,39 @@ class _SendMessageViewState extends State<SendMessageView> {
           message: _messageController.text.trim(),
           receiverName: contact.name,
           receiverPhone: contact.phoneNumber,
+          serviceType: serviceType,
           timestamp: DateTime.now(),
-          sentSuccessfully: result,
+          sentSuccessfully: smsResult || emailResult, // Success if either SMS or email succeeded
         );
 
         context.read<MessageHistoryBloc>().add(
           AddMessageHistoryEvent(messageHistory: messageHistory),
         );
 
-        if (result) {
-          successCount++;
-        } else {
-          failCount++;
-        }
+        if (smsResult) smsSuccessCount++;
+        if (!smsResult && _sendSMS && contact.phoneNumber.isNotEmpty) smsFailCount++;
+        if (emailResult) emailSuccessCount++;
+        if (!emailResult && _sendEmail && contact.email.isNotEmpty) emailFailCount++;
       }
 
-      if (successCount > 0) {
+      if (smsSuccessCount > 0 || emailSuccessCount > 0) {
+        String successMsg = '';
+        if (smsSuccessCount > 0) successMsg += 'SMS: $smsSuccessCount ';
+        if (emailSuccessCount > 0) successMsg += 'Email: $emailSuccessCount ';
+        successMsg += 'recipient${(smsSuccessCount + emailSuccessCount) > 1 ? 's' : ''}';
         Fluttertoast.showToast(
-          msg:
-              'Message sent to $successCount recipient${successCount > 1 ? 's' : ''}',
+          msg: 'Message sent to $successMsg',
           backgroundColor: Colors.green,
         );
       }
 
-      if (failCount > 0) {
+      if (smsFailCount > 0 || emailFailCount > 0) {
+        String failMsg = '';
+        if (smsFailCount > 0) failMsg += 'SMS: $smsFailCount ';
+        if (emailFailCount > 0) failMsg += 'Email: $emailFailCount ';
+        failMsg += 'recipient${(smsFailCount + emailFailCount) > 1 ? 's' : ''}';
         Fluttertoast.showToast(
-          msg:
-              'Failed to send to $failCount recipient${failCount > 1 ? 's' : ''}',
+          msg: 'Failed to send to $failMsg',
           backgroundColor: Colors.red,
         );
       }
@@ -154,6 +191,13 @@ class _SendMessageViewState extends State<SendMessageView> {
 
     if (_messageController.text.trim().isEmpty) {
       Fluttertoast.showToast(msg: 'Please enter a message');
+      return;
+    }
+
+    // Get current user info
+    final userInfo = await SessionHelpers.getUserInfo();
+    if (userInfo == null) {
+      Fluttertoast.showToast(msg: 'User session expired. Please login again.');
       return;
     }
 
@@ -219,17 +263,47 @@ class _SendMessageViewState extends State<SendMessageView> {
       return;
     }
 
+    // Check for existing scheduled messages at the same time
+    bool hasConflict = false;
+    context.read<ScheduledMessageBloc>().add(CheckScheduleConflictEvent(scheduledTime: scheduledDateTime));
+
+    // Wait for the conflict check result
+    await for (final state in context.read<ScheduledMessageBloc>().stream) {
+      if (state is ScheduleConflictChecked) {
+        hasConflict = state.hasConflict;
+        break;
+      } else if (state is ScheduledMessageError) {
+        Fluttertoast.showToast(
+          msg: 'Error checking schedule conflicts',
+          backgroundColor: Colors.red,
+        );
+        return;
+      }
+    }
+
+    if (hasConflict) {
+      Fluttertoast.showToast(
+        msg: 'Warning: There is already a scheduled message at this time!',
+        backgroundColor: Colors.orange,
+      );
+      // Continue with scheduling but show warning
+    }
+
     // Create scheduled message
     final scheduledMessage = ScheduledMessage(
       id: '', // Will be generated by the bloc
-      senderName: _senderNameController.text.trim().isNotEmpty
-          ? _senderNameController.text.trim()
-          : 'Default',
+      senderName: userInfo['fullName'] ?? 'Unknown',
+      senderRole: userInfo['role'] ?? 'Unknown',
       message: _messageController.text.trim(),
       recipientPhones: _selectedContacts
           .map((contact) => contact.phoneNumber)
           .toList(),
+      recipientEmails: _selectedContacts
+          .map((contact) => contact.email)
+          .toList(),
       recipientNames: _selectedContacts.map((contact) => contact.name).toList(),
+      sendSMS: _sendSMS,
+      sendEmail: _sendEmail,
       scheduledTime: scheduledDateTime,
       createdAt: DateTime.now(),
     );
@@ -536,6 +610,88 @@ class _SendMessageViewState extends State<SendMessageView> {
                           ),
                         ),
                       ),
+                    ),
+                  ),
+
+                  SizedBox(height: screenHeight * 0.03),
+
+                  // Service Selection
+                  Container(
+                    padding: EdgeInsets.all(screenWidth * 0.04),
+                    decoration: BoxDecoration(
+                      color: ColorHelpers.primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                      border: Border.all(
+                        color: ColorHelpers.primaryColor.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          text: 'Select Services',
+                          fontFamily: 'Poppins',
+                          fontSize: screenWidth * 0.045,
+                          color: ColorHelpers.secondaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        SizedBox(height: screenHeight * 0.015),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CheckboxListTile(
+                                title: Row(
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.sms,
+                                      color: ColorHelpers.accentColor,
+                                      size: screenWidth * 0.045,
+                                    ),
+                                    SizedBox(width: screenWidth * 0.02),
+                                    CustomText(
+                                      text: 'SMS',
+                                      fontFamily: 'Poppins',
+                                      fontSize: screenWidth * 0.04,
+                                      color: ColorHelpers.secondaryColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ],
+                                ),
+                                value: _sendSMS,
+                                onChanged: (value) => setState(() => _sendSMS = value ?? true),
+                                activeColor: ColorHelpers.accentColor,
+                                checkColor: Colors.white,
+                              ),
+                            ),
+                            Expanded(
+                              child: CheckboxListTile(
+                                title: Row(
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.envelope,
+                                      color: ColorHelpers.accentColor,
+                                      size: screenWidth * 0.045,
+                                    ),
+                                    SizedBox(width: screenWidth * 0.02),
+                                    CustomText(
+                                      text: 'Email',
+                                      fontFamily: 'Poppins',
+                                      fontSize: screenWidth * 0.04,
+                                      color: ColorHelpers.secondaryColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ],
+                                ),
+                                value: _sendEmail,
+                                onChanged: (value) => setState(() => _sendEmail = value ?? true),
+                                activeColor: ColorHelpers.accentColor,
+                                checkColor: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
 

@@ -340,12 +340,51 @@ class _ScheduleViewState extends State<ScheduleView> {
 
           // Sender
           CustomText(
-            text: 'From: ${message.senderName}',
+            text: 'From: ${message.senderName} (${message.senderRole})',
             fontFamily: 'Poppins',
             fontSize: screenWidth * 0.035,
             color: ColorHelpers.secondaryColor.withOpacity(0.8),
             fontWeight: FontWeight.w500,
             textAlign: TextAlign.left,
+          ),
+
+          SizedBox(height: screenHeight * 0.005),
+
+          // Services
+          Row(
+            children: [
+              if (message.sendSMS) ...[
+                FaIcon(
+                  FontAwesomeIcons.sms,
+                  color: ColorHelpers.accentColor,
+                  size: screenWidth * 0.035,
+                ),
+                SizedBox(width: screenWidth * 0.01),
+                CustomText(
+                  text: 'SMS',
+                  fontFamily: 'Poppins',
+                  fontSize: screenWidth * 0.03,
+                  color: ColorHelpers.secondaryColor.withOpacity(0.7),
+                  fontWeight: FontWeight.w400,
+                ),
+              ],
+              if (message.sendSMS && message.sendEmail) SizedBox(width: screenWidth * 0.02),
+              if (message.sendEmail) ...[
+                FaIcon(
+                  FontAwesomeIcons.envelope,
+                  color: ColorHelpers.accentColor,
+                  size: screenWidth * 0.035,
+                ),
+                SizedBox(width: screenWidth * 0.01),
+                CustomText(
+                  text: 'Email',
+                  fontFamily: 'Poppins',
+                  fontSize: screenWidth * 0.03,
+                  color: ColorHelpers.secondaryColor.withOpacity(0.7),
+                  fontWeight: FontWeight.w400,
+                ),
+              ],
+            ],
           ),
 
           SizedBox(height: screenHeight * 0.005),

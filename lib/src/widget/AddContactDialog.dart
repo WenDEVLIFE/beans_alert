@@ -23,6 +23,7 @@ class AddContactDialog extends StatefulWidget {
 class _AddContactDialogState extends State<AddContactDialog> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -76,6 +77,14 @@ class _AddContactDialogState extends State<AddContactDialog> {
                 fillColor: ColorHelpers.secondaryColor.withOpacity(0.1),
                 keyboardType: TextInputType.phone,
               ),
+              SizedBox(height: screenHeight * 0.02),
+              CustomTextField(
+                controller: _emailController,
+                hintText: 'Email',
+                borderColor: ColorHelpers.primaryColor,
+                fillColor: ColorHelpers.secondaryColor.withOpacity(0.1),
+                keyboardType: TextInputType.emailAddress,
+              ),
             ],
           ),
         ),
@@ -96,6 +105,7 @@ class _AddContactDialogState extends State<AddContactDialog> {
           onPressed: () async {
             final name = _nameController.text.trim();
             final phone = _phoneController.text.trim();
+            final email = _emailController.text.trim();
 
             if (name.isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -109,6 +119,13 @@ class _AddContactDialogState extends State<AddContactDialog> {
                 const SnackBar(
                   content: Text('Please enter a valid Philippine phone number'),
                 ),
+              );
+              return;
+            }
+
+            if (email.isNotEmpty && !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Please enter a valid email address')),
               );
               return;
             }
@@ -130,6 +147,7 @@ class _AddContactDialogState extends State<AddContactDialog> {
               id: DateTime.now().millisecondsSinceEpoch.toString(),
               name: name,
               phoneNumber: phone,
+              email: email,
               purokNumber: widget.purokId,
             );
             widget.onAddContact(widget.purokId, contact);

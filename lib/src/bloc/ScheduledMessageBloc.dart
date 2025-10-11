@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import '../model/ScheduledMessage.dart';
 import '../repository/ScheduledMessageRepository.dart';
 import '../services/SemaphoreService.dart';
+import '../services/GmailService.dart';
 
 abstract class ScheduledMessageEvent extends Equatable {
   const ScheduledMessageEvent();
@@ -55,6 +56,15 @@ class SearchScheduledMessagesEvent extends ScheduledMessageEvent {
 
 class CheckAndSendScheduledMessagesEvent extends ScheduledMessageEvent {}
 
+class CheckScheduleConflictEvent extends ScheduledMessageEvent {
+  final DateTime scheduledTime;
+
+  const CheckScheduleConflictEvent({required this.scheduledTime});
+
+  @override
+  List<Object> get props => [scheduledTime];
+}
+
 abstract class ScheduledMessageState extends Equatable {
   const ScheduledMessageState();
 
@@ -84,6 +94,15 @@ class ScheduledMessageError extends ScheduledMessageState {
   List<Object> get props => [message];
 }
 
+class ScheduleConflictChecked extends ScheduledMessageState {
+  final bool hasConflict;
+
+  const ScheduleConflictChecked(this.hasConflict);
+
+  @override
+  List<Object> get props => [hasConflict];
+}
+
 class ScheduledMessageBloc
     extends Bloc<ScheduledMessageEvent, ScheduledMessageState> {
   final ScheduledMessageRepository scheduledMessageRepository;
@@ -98,6 +117,7 @@ class ScheduledMessageBloc
     on<DeleteScheduledMessageEvent>(_onDeleteScheduledMessage);
     on<SearchScheduledMessagesEvent>(_onSearchScheduledMessages);
     on<CheckAndSendScheduledMessagesEvent>(_onCheckAndSendScheduledMessages);
+    on<CheckScheduleConflictEvent>(_onCheckScheduleConflict);
 
     // Start the scheduler timer to check for due messages every minute
     _startScheduler();
@@ -265,26 +285,47 @@ class ScheduledMessageBloc
             message.scheduledTime.isAtSameMomentAs(now)) {
           print('📅 Processing scheduled message: ${message.id}');
 
-          // Send SMS to all recipients
-          int successCount = 0;
-          int failCount = 0;
+          // Send SMS and Email to all recipients
+          int smsSuccessCount = 0;
+          int smsFailCount = 0;
+          int emailSuccessCount = 0;
+          int emailFailCount = 0;
 
           for (int i = 0; i < message.recipientPhones.length; i++) {
             final phone = message.recipientPhones[i];
+            final email = message.recipientEmails[i];
             final name = message.recipientNames[i];
 
-            final result = await SemaphoreService.sendSMS(
-              phone,
-              message.message,
-              senderName: message.senderName.isNotEmpty
-                  ? message.senderName
-                  : null,
-            );
+            // Send SMS if enabled
+            if (message.sendSMS && phone.isNotEmpty) {
+              final smsResult = await SemaphoreService.sendSMS(
+                phone,
+                message.message,
+                senderName: message.senderName.isNotEmpty
+                    ? message.senderName
+                    : null,
+              );
 
-            if (result) {
-              successCount++;
-            } else {
-              failCount++;
+              if (smsResult) {
+                smsSuccessCount++;
+              } else {
+                smsFailCount++;
+              }
+            }
+
+            // Send Email if enabled
+            if (message.sendEmail && email.isNotEmpty) {
+              final emailResult = await GmailService.sendedToClient(
+                [email],
+                'Scheduled Message from ${message.senderName}',
+                message.message,
+              );
+
+              if (emailResult) {
+                emailSuccessCount++;
+              } else {
+                emailFailCount++;
+              }
             }
           }
 
@@ -292,7 +333,7 @@ class ScheduledMessageBloc
           await scheduledMessageRepository.markAsSent(message.id, now);
 
           print(
-            '✅ Scheduled message sent: ${message.id} - $successCount success, $failCount failed',
+            '✅ Scheduled message sent: ${message.id} - SMS: $smsSuccessCount success, $smsFailCount failed | Email: $emailSuccessCount success, $emailFailCount failed',
           );
         }
       }
@@ -303,6 +344,26 @@ class ScheduledMessageBloc
           'Failed to process scheduled messages: ${e.toString()}',
         ),
       );
+    }
+  }
+
+  Future<void> _onCheckScheduleConflict(
+    CheckScheduleConflictEvent event,
+    Emitter<ScheduledMessageState> emit,
+  ) async {
+    try {
+      final existingMessages = await scheduledMessageRepository.getScheduledMessages().first;
+      final hasConflict = existingMessages.any((msg) =>
+        !msg.isSent &&
+        msg.scheduledTime.year == event.scheduledTime.year &&
+        msg.scheduledTime.month == event.scheduledTime.month &&
+        msg.scheduledTime.day == event.scheduledTime.day &&
+        msg.scheduledTime.hour == event.scheduledTime.hour &&
+        msg.scheduledTime.minute == event.scheduledTime.minute
+      );
+      emit(ScheduleConflictChecked(hasConflict));
+    } catch (e) {
+      emit(ScheduledMessageError('Failed to check schedule conflict: ${e.toString()}'));
     }
   }
 }

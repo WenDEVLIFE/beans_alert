@@ -2,12 +2,14 @@ class ContactModel {
   final String id;
   final String name;
   final String phoneNumber;
+  final String email;
   final String purokNumber;
 
   ContactModel({
     required this.id,
     required this.name,
     required this.phoneNumber,
+    required this.email,
     required this.purokNumber,
   });
 
@@ -16,6 +18,7 @@ class ContactModel {
       id: id,
       name: map['name'] ?? '',
       phoneNumber: map['phoneNumber'] ?? '',
+      email: map['email'] ?? '',
       purokNumber: map['purokNumber'] ?? '',
     );
   }
@@ -24,6 +27,7 @@ class ContactModel {
     return {
       'name': name,
       'phoneNumber': phoneNumber,
+      'email': email,
       'purokNumber': purokNumber,
     };
   }
@@ -32,12 +36,14 @@ class ContactModel {
     String? id,
     String? name,
     String? phoneNumber,
+    String? email,
     String? purokNumber,
   }) {
     return ContactModel(
       id: id ?? this.id,
       name: name ?? this.name,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      email: email ?? this.email,
       purokNumber: purokNumber ?? this.purokNumber,
     );
   }
@@ -49,6 +55,7 @@ class ContactModel {
         other.id == id &&
         other.name == name &&
         other.phoneNumber == phoneNumber &&
+        other.email == email &&
         other.purokNumber == purokNumber;
   }
 
@@ -57,11 +64,12 @@ class ContactModel {
     return id.hashCode ^
         name.hashCode ^
         phoneNumber.hashCode ^
+        email.hashCode ^
         purokNumber.hashCode;
   }
 
   @override
   String toString() {
-    return 'ContactModel(id: $id, name: $name, phoneNumber: $phoneNumber, purokNumber: $purokNumber)';
+    return 'ContactModel(id: $id, name: $name, phoneNumber: $phoneNumber, email: $email, purokNumber: $purokNumber)';
   }
 }

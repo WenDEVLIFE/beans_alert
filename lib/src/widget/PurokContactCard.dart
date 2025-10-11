@@ -387,6 +387,29 @@ class _PurokContactCardState extends State<PurokContactCard>
                     ),
                   ],
                 ),
+                if (contact.email.isNotEmpty) ...[
+                  SizedBox(height: screenHeight * 0.003),
+                  Row(
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.envelope,
+                        color: Colors.grey.shade600,
+                        size: screenWidth * 0.03,
+                      ),
+                      SizedBox(width: screenWidth * 0.02),
+                      Flexible(
+                        child: CustomText(
+                          text: contact.email,
+                          fontFamily: 'Poppins',
+                          fontSize: screenWidth * 0.033,
+                          color: ColorHelpers.secondaryColor.withOpacity(0.8),
+                          fontWeight: FontWeight.w400,
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),

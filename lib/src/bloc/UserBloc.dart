@@ -170,6 +170,26 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     Emitter<UserState> emit,
   ) async {
     try {
+      // First, get the user to check their role
+      UserModel? userToDelete = await registerRepository.getUserById(event.userId);
+
+      if (userToDelete == null) {
+        Fluttertoast.showToast(
+          msg: 'User not found',
+          backgroundColor: Colors.red,
+        );
+        return;
+      }
+
+      // Prevent deletion of admin users
+      if (userToDelete.role.toLowerCase() == 'admin') {
+        Fluttertoast.showToast(
+          msg: 'Cannot delete admin account',
+          backgroundColor: Colors.orange,
+        );
+        return;
+      }
+
       bool isDeleted = await registerRepository.deleteUser(event.userId);
 
       if (isDeleted) {
