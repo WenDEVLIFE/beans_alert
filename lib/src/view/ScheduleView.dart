@@ -12,6 +12,7 @@ import '../bloc/ScheduledMessageBloc.dart';
 import '../helpers/ColorHelpers.dart';
 import '../widget/CalendarWidget.dart';
 import '../widget/CustomText.dart';
+import '../widget/EditScheduledMessageDialog.dart';
 
 class ScheduleView extends StatefulWidget {
   const ScheduleView({Key? key}) : super(key: key);
@@ -103,6 +104,22 @@ class _ScheduleViewState extends State<ScheduleView> {
               ),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void _editScheduledMessage(ScheduledMessage message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EditScheduledMessageDialog(
+          message: message,
+          onSave: (updatedMessage) {
+            context.read<ScheduledMessageBloc>().add(
+              UpdateScheduledMessageEvent(scheduledMessage: updatedMessage),
+            );
+          },
         );
       },
     );
@@ -419,6 +436,28 @@ class _ScheduleViewState extends State<ScheduleView> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                TextButton.icon(
+                  onPressed: () => _editScheduledMessage(message),
+                  icon: FaIcon(
+                    FontAwesomeIcons.edit,
+                    size: screenWidth * 0.04,
+                    color: ColorHelpers.accentColor,
+                  ),
+                  label: CustomText(
+                    text: 'Edit',
+                    fontFamily: 'Poppins',
+                    fontSize: screenWidth * 0.035,
+                    color: ColorHelpers.accentColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.02,
+                      vertical: screenHeight * 0.005,
+                    ),
+                  ),
+                ),
+                SizedBox(width: screenWidth * 0.02),
                 TextButton.icon(
                   onPressed: () => _deleteScheduledMessage(message),
                   icon: FaIcon(
